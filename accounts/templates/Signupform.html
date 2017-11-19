@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Spectre sign up form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <style>
+        * {
+        . border-radius(0) !important;
+        }
+
+        #field {
+            margin-bottom: 20px;
+        }
+
+        td, th {
+            padding: 0 15px 0 15px;
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse" style="margin: 0px">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">WebSiteName</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="{% url 'home' %}">Home</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="{% url 'accounts:signup' %}"><span class="glyphicon glyphicon-user"></span> Sign
+                Up</a></li>
+            <li><a href="{% url 'accounts:login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+
+        </ul>
+    </div>
+</nav>
+
+
+<h1 style="margin-left: 16%">Please enter the credentials below</h1>
+
+
+{% if error %}
+    {{ error }}
+    <br/>
+    <br/>
+
+{% endif %}
+
+
+
+
+
+<form class="form-horizontal" style="margin-top: 40px;margin-right: 25%" method="post"
+      action="{% url 'accounts:signup' %} ">
+    {% csrf_token %}
+
+    <div class="form-group" style="margin-right: 30px">
+        <label class="control-label col-sm-2" for="name">Name:</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="name" placeholder="Enter name" name="name" required>
+        </div>
+    </div>
+
+    <div class="form-group" style="margin-right: 30px">
+        <label class="control-label col-sm-2" for="dob">Date of Birth:</label>
+        <div class="col-sm-10">
+            <input type="date" class="form-control" id="dob" placeholder="Enter DOB" name="dob" required>
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <label class="control-label col-sm-2" for="gender">Gender:</label>
+        <div class="col-sm-10">
+            <select id="gender" title = "gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <label class="control-label col-sm-2" for="username">Email:</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" id="username" placeholder="Enter email" name="username">
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <label class="control-label col-sm-2" for="password">Password:</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <div class="container" style="margin-left: 16.5%">
+            <div class="panel panel-default">
+                <div class="panel-heading">Skills</div>
+                <div class="panel-body">
+
+
+                    <div class="text-left">
+                        <input type="button" class="btn btn-primary" value='Add Skill' id='addskill'/>
+                        <input type='button' class="btn btn-danger" value='Remove Skill' id='removeskill'>
+                    </div>
+
+
+                    <div class="container2">
+                        <div class="row2">
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" name="skills[]" placeholder="Enter Skills"/>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <hr/>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <div class="container" style="margin-left: 16.5%">
+            <div class="panel panel-default">
+                <div class="panel-heading">Interests</div>
+                <div class="panel-body">
+
+                    <div class="text-left">
+                        <input type="button" class="btn btn-primary" value='Add Interest' id='addinterest'/>
+                        <input type='button' class="btn btn-danger" value='Remove Interest' id='removeinterest'>
+                    </div>
+
+
+                    <div class="container3">
+                        <div class="row3">
+
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" name="interests[]"
+                                           placeholder="Enter interest"/>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <hr/>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <div class="container" style="margin-left: 16.5%">
+            <div class="panel panel-default">
+                <div class="panel-heading">Address</div>
+                <div class="panel-body">
+
+                    <table>
+                        <tr>
+                            <th>Country</th>
+                            <th>City</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="Country" id="country" class="form-control"></td>
+                            <td><input type="text" name="City" id="city" class="form-control"></td>
+                        </tr>
+
+                    </table>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <div class="container" style="margin-left: 16.5%">
+            <div class="panel panel-default">
+                <div class="panel-heading">Work Experiences</div>
+                <div class="panel-body">
+
+
+                    <div class="text-left">
+
+                        <input type="button" class="btn btn-primary" value='Add Experience' id='addButton'/>
+                        <input type='button' class="btn btn-danger" value='Remove Experience' id='removeButton'>
+                    </div>
+
+
+                    <hr/>
+
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" name="Company[]" placeholder="Company"/>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" name="Position[]" placeholder="Position"/>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="date" class="form-control" name="startdates[]"
+                                           placeholder="StartDate"/>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="date" class="form-control" name="enddates[]" placeholder="EndDate"/>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <div class="container" style="margin-left: 16.5%">
+            <div class="panel panel-default">
+                <div class="panel-heading">Education</div>
+                <div class="panel-body">
+
+
+                    <div class="text-left">
+
+                        <input type="button" class="btn btn-primary" value='Add Education' id='addEducation'/>
+                        <input type='button' class="btn btn-danger" value='Remove Education' id='removeEducation'>
+                    </div>
+
+
+                    <hr/>
+
+
+                    <div class="container1">
+                        <div class="row1">
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" name="degreenames[]" placeholder="Degree"/>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" name="institution[]"
+                                           placeholder="Institution"/>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="date" class="form-control" name="startdates1[]"
+                                           placeholder="StartDate"/>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="col-xs-10">
+                                    <input type="date" class="form-control" name="enddates1[]" placeholder="EndDate"/>
+                                </div>
+                            </div>
+
+                            <hr/>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group" style="margin-right: 30px">
+        <label class="control-label col-sm-2" for="pwd">Objective Statement:</label>
+        <div class="col-sm-10">
+            <textarea name="textarea" style="width:250px;height:150px;" name="objstat" id="objstat"></textarea>
+        </div>
+    </div>
+
+
+    <div class="form-group" style="margin-right: 30px">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    var $container = $('.container');
+    var $row = $('.row');
+    var $add = $('#addButton');
+    var $remove = $('#removeButton');
+    var $focused;
+
+    $container.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+    $add.on('click', function () {
+        var $newRow = $row.clone().insertAfter('.row:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+    $remove.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+
+
+        }
+    });
+
+
+    var $container1 = $('.container1');
+    var $row1 = $('.row1');
+    var $addedu = $('#addEducation');
+    var $removeedu = $('#removeEducation');
+
+
+    $container1.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addedu.on('click', function () {
+        var $newRow = $row1.clone().insertAfter('.row1:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+
+    $removeedu.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row1');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+
+    // for skills
+
+    var $container2 = $('.container2');
+    var $row2 = $('.row2');
+    var $addskill = $('#addskill');
+    var $removeskill = $('#removeskill');
+
+
+    $container2.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addskill.on('click', function () {
+        var $newRow = $row2.clone().insertAfter('.row2:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+
+    $removeskill.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row2');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+    // for interest
+
+
+    var $container3 = $('.container3');
+    var $row3 = $('.row3');
+    var $addinterest = $('#addinterest');
+    var $removeinterest = $('#removeinterest');
+
+
+    $container3.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addinterest.on('click', function () {
+        var $newRow = $row3.clone().insertAfter('.row3:last');
+
+
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+
+    $removeinterest.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row3');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
