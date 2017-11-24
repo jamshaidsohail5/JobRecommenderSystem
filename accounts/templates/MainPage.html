@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>MainPage</title>
 
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -18,7 +17,7 @@
             <a class="navbar-brand" href="#">WebSiteName</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active"> <a href="{% url 'accounts:mainpage' %}">MainPage</a></li>
+            <li class="active"><a href="{% url 'accounts:mainpage' %}">MainPage</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
 
@@ -36,6 +35,80 @@
 
 <h1>This is a sample main page.This is displayed after the user has signed up or logged in.
     Here i will display the skill set of the user picking it from the db.</h1>
+
+
+<br>
+<br>
+
+<h2>The Skill Set of the users are :</h2>
+<br>
+<br>
+
+
+{% for user in UserRecord.all %}
+
+
+
+<h4>Name:{{ user.name }} </h4>
+
+
+<br>
+<br>
+
+
+<h4>Date Of Birth: {{ user.dateofbirth }}</h4>
+<br>
+<br>
+
+
+<h4>Gender: {{ user.gender }}</h4>
+<br>
+<br>
+
+
+<h4>Email: {{ user.email }}</h4>
+<br>
+<br>
+
+
+<h4>Password: {{ user.password }}</h4>
+<br>
+<br>
+
+
+<h4>Skills:</h4>
+<br>
+<br>
+
+
+<h4>Interests:</h4>
+<br>
+<br>
+
+
+<h4>Country: {{ user.country }}</h4>
+<br>
+<br>
+
+
+<h4>City: {{ user.city }}</h4>
+<br>
+<br>
+
+
+
+<h4>Objective Statement: {{ user.objectivestatement }}</h4>
+
+{% endfor %}
+
+<h4>Work Experiences:</h4>
+<br>
+<br>
+
+
+<h4>Education:</h4>
+<br>
+<br>
 
 
 </body>

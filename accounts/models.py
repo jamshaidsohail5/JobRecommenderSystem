@@ -14,10 +14,8 @@ class signupModel(models.Model):
     country = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     skills = models.TextField(null=True)
-    interests = models.TextField(null = True)
+    interests = models.TextField(null=True)
     objectivestatement = models.CharField(max_length=100)
-
-
 
 
 class workexperienceModel(models.Model):
@@ -28,28 +26,9 @@ class workexperienceModel(models.Model):
     UserExperience = models.ForeignKey(signupModel, on_delete=models.CASCADE)
 
 
-
-
-
 class Education(models.Model):
     degree = models.CharField(max_length=100)
     institution = models.CharField(max_length=100)
     startdateedu = models.CharField(max_length=100)
     enddateedu = models.CharField(max_length=100)
-    UserEducation = models.ForeignKey(signupModel,on_delete=models.CASCADE)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    UserEducation = models.ForeignKey(signupModel, on_delete=models.CASCADE)

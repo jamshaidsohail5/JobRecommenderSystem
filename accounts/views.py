@@ -3,7 +3,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from pandas._libs import json
 
-from accounts.models import signupModel, workexperienceModel, Education
+from accounts import models
+#from accounts.models import signupModel, workexperienceModel, Education
+
+
 def signup(request):
     if request.method == "POST":
         try:
@@ -67,22 +70,36 @@ def signup(request):
 
     else:
         return render(request, 'Signupform.html')
+
+
 def loginview(request):
     if request.method == "POST":
         user = authenticate(username=request.POST['username1'], password=request.POST['password1'])
         if user is not None:
             login(request, user)
-            return redirect('accounts:mainpage')
+            username = None
+            if request.user.is_authenticated():
+                username = request.user.username
+                UserRecord = models.signupModel.objects.filter(email=username)
+                print("1")
+                print(UserRecord[0].name)
+                print("2")
+                return render(request,'MainPage.html',{'UserRecord':UserRecord})
         else:
             return render(request, 'Signinform.html', {'error': 'The user name and password didn\'t match.'})
     else:
         return render(request, 'Signinform.html')
+
+
 def logoutview(request):
     if request.method == "POST":
         logout(request)
         return redirect('home')
+
+
 def mainpageview(request):
     return render(request, 'MainPage.html')
+
 # print(request.POST['name'])
 # print(request.POST['dob'])
 #
