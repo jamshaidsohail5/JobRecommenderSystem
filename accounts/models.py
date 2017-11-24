@@ -7,7 +7,7 @@ from JobRecommenderSystem import settings
 class signupModel(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(max_length=100)
-    dateofbirth = DateField(input_formats = settings.DATE_INPUT_FORMATS)
+    dateofbirth = models.CharField(max_length=100)
     gender = models.CharField(max_length=100)
     email = models.EmailField()
     password = models.CharField(max_length=100)
@@ -23,8 +23,8 @@ class signupModel(models.Model):
 class workexperienceModel(models.Model):
     company = models.CharField(max_length=100)
     position = models.CharField(max_length=100)
-    startDate = models.DateField(input_formats=settings.DATE_INPUT_FORMATS)
-    endDate = models.DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    startDate = models.CharField(max_length=100)
+    endDate = models.CharField(max_length=100)
     UserExperience = models.ForeignKey(signupModel, on_delete=models.CASCADE)
 
 
@@ -34,8 +34,8 @@ class workexperienceModel(models.Model):
 class Education(models.Model):
     degree = models.CharField(max_length=100)
     institution = models.CharField(max_length=100)
-    startdateedu = models.DateField(input_formats=settings.DATE_INPUT_FORMATS)
-    enddateedu = models.DateField(input_formats=settings.DATE_INPUT_FORMATS)
+    startdateedu = models.CharField(max_length=100)
+    enddateedu = models.CharField(max_length=100)
     UserEducation = models.ForeignKey(signupModel,on_delete=models.CASCADE)
 
 
