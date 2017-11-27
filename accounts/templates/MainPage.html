@@ -28,6 +28,12 @@
             </form>
 
 
+            <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
+             <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
+                {% csrf_token %}
+                <input type="hidden"/>
+            </form>
+
         </ul>
     </div>
 </nav>
@@ -98,6 +104,9 @@
 
 
 <h4>Objective Statement: {{ user.objectivestatement }}</h4>
+<br>
+<br>
+
 
 {% endfor %}
 

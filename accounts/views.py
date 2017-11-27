@@ -4,7 +4,10 @@ from django.contrib.auth import authenticate, login, logout
 from pandas._libs import json
 
 from accounts import models
-#from accounts.models import signupModel, workexperienceModel, Education
+from accounts.models import signupModel, workexperienceModel, Education
+
+
+# from accounts.models import signupModel
 
 
 def signup(request):
@@ -65,9 +68,9 @@ def signup(request):
                 ArrayContainingEducationObject[k].save()
 
                 # Setting the session
-                login(request, user1)
-        return render(request, 'MainPage.html')
-
+            login(request, user1)
+            UserRecord = models.signupModel.objects.filter(email=request.POST['username'])
+            return render(request, 'MainPage.html', {'UserRecord': UserRecord})
     else:
         return render(request, 'Signupform.html')
 
@@ -84,7 +87,7 @@ def loginview(request):
                 print("1")
                 print(UserRecord[0].name)
                 print("2")
-                return render(request,'MainPage.html',{'UserRecord':UserRecord})
+                return render(request, 'MainPage.html', {'UserRecord': UserRecord})
         else:
             return render(request, 'Signinform.html', {'error': 'The user name and password didn\'t match.'})
     else:
