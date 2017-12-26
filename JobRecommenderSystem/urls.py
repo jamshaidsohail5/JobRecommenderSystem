@@ -5,7 +5,7 @@ from home import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('accounts.urls')),
-    url(r'^jobs/', include('jobs.urls')),
+    url(r'^mainpage/', include('jobs.urls')),
     url(r'^$', views.home, name="home"),
 ]
 

@@ -1,15 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.template import RequestContext
 from pandas._libs import json
-
 from accounts import models
 from accounts.models import signupModel, workexperienceModel, Education
+import json as json1
 
 
 # from accounts.models import signupModel
-
-
 def signup(request):
     if request.method == "POST":
         try:
@@ -69,8 +68,9 @@ def signup(request):
 
                 # Setting the session
             login(request, user1)
-            UserRecord = models.signupModel.objects.filter(email=request.POST['username'])
-            return render(request, 'MainPage.html', {'UserRecord': UserRecord})
+            # UserRecord = models.signupModel.objects.filter(email=request.POST['username'])
+            return render(request, 'jobs.html')
+            # return render(request, 'MainPage.html', {'UserRecord': UserRecord})
     else:
         return render(request, 'Signupform.html')
 
@@ -82,12 +82,13 @@ def loginview(request):
             login(request, user)
             username = None
             if request.user.is_authenticated():
-                username = request.user.username
-                UserRecord = models.signupModel.objects.filter(email=username)
-                print("1")
-                print(UserRecord[0].name)
-                print("2")
-                return render(request, 'MainPage.html', {'UserRecord': UserRecord})
+                # username = request.user.username
+                # UserRecord = models.signupModel.objects.filter(email=username)
+                # print("1")
+                # print(UserRecord[0].name)
+                # print("2")
+                return render(request, 'jobs.html')
+                # return render(request, 'MainPage.html', {'UserRecord': UserRecord})
         else:
             return render(request, 'Signinform.html', {'error': 'The user name and password didn\'t match.'})
     else:
@@ -101,7 +102,45 @@ def logoutview(request):
 
 
 def mainpageview(request):
-    return render(request, 'MainPage.html')
+    if request.user.is_authenticated():
+        username = request.user.username
+        UserRecord = models.signupModel.objects.filter(email=username)
+        UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
+        UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
+        print("agya4")
+
+        return render(request, 'MainPage.html', {'UserRecord': UserRecord,
+                                                 'UserEducation': UserEducations,
+                                                 'UserExperience': UserExperiences})
+
+
+def editprofile(request):
+    # Now here i ll retrieve all the credentials of the user from the
+    # database and will display them on the page
+    flag = False
+    flag1 = False
+    if request.user.is_authenticated():
+        username = request.user.username
+        UserRecord = models.signupModel.objects.filter(email=username)
+        UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
+        UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
+        print(UserRecord[0].gender)
+        if UserRecord[0].gender == 'male':
+            flag = True
+            print("1")
+        else:
+            print("2")
+            flag1 = True
+        return render(request, 'EditProfile.html', {'UserRecord': UserRecord,
+                                                    'UserEducation': UserEducations,
+                                                    'UserExperience': UserExperiences, "flag": flag, "flag1": flag1})
+
+# return render_to_response("MainPage.html", {
+#     'UserRecord': UserRecord, 'UserEducation': UserEducations,
+#     'UserExperiences': UserExperiences,
+# }, context_instance=RequestContext(request))
+
+# print("agya5")
 
 # print(request.POST['name'])
 # print(request.POST['dob'])

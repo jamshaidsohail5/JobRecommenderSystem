@@ -7,5 +7,7 @@ urlpatterns = [
     url(r'^signup/', views.signup, name="signup"),
     url(r'^login/', views.loginview, name="login"),
     url(r'^logout/', views.logoutview, name="logout"),
-    url(r'^mainpage/', views.mainpageview, name="mainpage")
+    url(r'^viewprofile/', views.mainpageview, name="mainpage"),
+    url(r'^editprofile/', views.editprofile, name="editprofile")
+
 ]

@@ -11,28 +11,56 @@
 </head>
 <body>
 
+
 <nav class="navbar navbar-inverse" style="margin: 0px">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">WebSiteName</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="{% url 'accounts:mainpage' %}">MainPage</a></li>
+            <li><a href="{% url 'jobs:jobs' %}">MainPage</a></li>
+
         </ul>
+
+
         <ul class="nav navbar-nav navbar-right">
 
-            <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>
-            <form id="logout" method="post" action="{% url 'accounts:logout' %}">
-                {% csrf_token %}
-                <input type="hidden"/>
-            </form>
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Settings <span
+                    class="caret"></span></a>
+                <ul class="dropdown-menu">
 
 
-            <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
-             <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
-                {% csrf_token %}
-                <input type="hidden"/>
-            </form>
+                    <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>
+                    <form id="logout" method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                    <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
+                    <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                    <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a></li>
+                    <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                    <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a></li>
+                    <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                </ul>
+            </li>
+
 
         </ul>
     </div>
@@ -41,7 +69,6 @@
 
 <h1>This is a sample main page.This is displayed after the user has signed up or logged in.
     Here i will display the skill set of the user picking it from the db.</h1>
-
 
 <br>
 <br>
@@ -54,68 +81,94 @@
 {% for user in UserRecord.all %}
 
 
-
-<h4>Name:{{ user.name }} </h4>
-
-
-<br>
-<br>
+    <h4>Name:{{ user.name }} </h4>
 
 
-<h4>Date Of Birth: {{ user.dateofbirth }}</h4>
-<br>
-<br>
+    <br>
+    <br>
 
 
-<h4>Gender: {{ user.gender }}</h4>
-<br>
-<br>
+    <h4>Date Of Birth: {{ user.dateofbirth }}</h4>
+    <br>
+    <br>
 
 
-<h4>Email: {{ user.email }}</h4>
-<br>
-<br>
+    <h4>Gender: {{ user.gender }}</h4>
+    <br>
+    <br>
 
 
-<h4>Password: {{ user.password }}</h4>
-<br>
-<br>
+    <h4>Email: {{ user.email }}</h4>
+    <br>
+    <br>
 
 
-<h4>Skills:</h4>
-<br>
-<br>
-
-
-<h4>Interests:</h4>
-<br>
-<br>
-
-
-<h4>Country: {{ user.country }}</h4>
-<br>
-<br>
-
-
-<h4>City: {{ user.city }}</h4>
-<br>
-<br>
+    <h4>Password: {{ user.password }}</h4>
+    <br>
+    <br>
 
 
 
-<h4>Objective Statement: {{ user.objectivestatement }}</h4>
-<br>
-<br>
+    <h4>Skills: {{ user.skills }}</h4>
+
+    <br>
+    <br>
+
+    <h4>Interests: {{ user.interests }}</h4>
+
+    <br>
+    <br>
+
+
+    <h4>Country: {{ user.country }}</h4>
+    <br>
+    <br>
+
+
+    <h4>City: {{ user.city }}</h4>
+    <br>
+    <br>
+
+
+
+    <h4>Objective Statement: {{ user.objectivestatement }}</h4>
+    <br>
+    <br>
 
 
 {% endfor %}
 
-<h4>Work Experiences:</h4>
+
+<h4>Work Experiences</h4>
+<br>
+{% for work in UserExperience.all %}
+    <h4>Company: {{ work.company }}</h4>
+    <h4>Position: {{ work.position }}</h4>
+    <h4>StartDate: {{ work.startDate }}</h4>
+    <h4>EndDate:{{ work.endDate }}</h4>
+    <br>
+    <br>
+{% endfor %}
+
+
+
 <br>
 <br>
 
 
-<h4>Education:</h4>
+<h4>Educations:</h4>
+<br>
+{% for edu in UserEducation.all %}
+
+    <h4>Degree:{{ edu.degree }}</h4>
+    <h4>Institution: {{ edu.institution }}</h4>
+    <h4>StartDateofEducation: {{ edu.startdateedu }}</h4>
+    <h4>EndDateofEducation: {{ edu.enddateedu }}</h4>
+    <br>
+    <br>
+{% endfor %}
+
+
 <br>
 <br>
 

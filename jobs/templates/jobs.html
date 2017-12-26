@@ -1,8 +1,9 @@
 <html>
 <head>
+
     <title>Jobs</title>
     <style>
-        .center{
+        .center {
             position: relative;
             top: 10%;
             left: 25%;
@@ -17,6 +18,7 @@
             box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
             margin: 20px 0;
         }
+
         p {
             display: block;
             -webkit-margin-before: 1em;
@@ -24,30 +26,35 @@
             -webkit-margin-start: 0px;
             -webkit-margin-end: 0px;
         }
-        .smallGrayFont{
+
+        .smallGrayFont {
             font-size: 13px;
             font-weight: normal;
             color: #555;
         }
-        .title_name{
+
+        .title_name {
             font-size: 16px;
             font-weight: bold;
             color: #2366b6;
         }
-        .description{
+
+        .description {
             overflow-wrap: normal;
             overflow-wrap: break-word;
             font-size: 13px;
-            font-family: Arial,Sans-serif;
+            font-family: Arial, Sans-serif;
             font-weight: normal;
             text-align: left;
             margin-right: 10px;
         }
-        .greenLink{
+
+        .greenLink {
             font-size: 12px;
             padding: 0px;
         }
-        .favLink{
+
+        .favLink {
             outline: 0;
             cursor: pointer;
             color: #2366b6;
@@ -59,7 +66,9 @@
             display: inline-block;
         }
 
-        input.star { display: none; }
+        input.star {
+            display: none;
+        }
 
         label.star {
             float: right;
@@ -80,14 +89,19 @@
             text-shadow: 0 0 20px #952;
         }
 
-        input.star-1:checked ~ label.star:before { color: #F62; }
+        input.star-1:checked ~ label.star:before {
+            color: #F62;
+        }
 
-        label.star:hover { transform: rotate(-15deg) scale(1.3); }
+        label.star:hover {
+            transform: rotate(-15deg) scale(1.3);
+        }
 
         label.star:before {
             content: '\f006';
             font-family: FontAwesome;
         }
+
         .rate-container > i {
             float: right;
         }
@@ -97,79 +111,144 @@
             color: gold;
         }
     </style>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
+    <!--
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+            -->
 
 
-    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 
 </head>
+
+
+<nav class="navbar navbar-inverse" style="margin: 0px">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">WebSiteName</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="{% url 'jobs:jobs' %}">MainPage</a></li>
+        </ul>
+
+
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Settings <span
+                    class="caret"></span></a>
+                <ul class="dropdown-menu">
+
+                    <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>
+                    <form id="logout" method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                    <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
+                    <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                    <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a></li>
+                    <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+
+                    <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a></li>
+                    <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+                </ul>
+            </li>
+
+
+        </ul>
+    </div>
+</nav>
+
 
 <body>
 <h1 align="center">Job Postings</h1>
 
 <form class="form-inline" style="text-align: center" action="{% url 'jobs:jobsretrieve' %}" method="post">
     {% csrf_token %}
-  <div class="form-group">
-      <input type="text" class="form-control" name="keyword" placeholder="Keywords: Django, Web" required>
-  </div>
-  <div class="form-group">
-      <input type="text" class="form-control" name="location" placeholder="Location: City, State" required>
-  </div>
-  <button type="submit" class="btn btn-default">Search</button>
+    <div class="form-group">
+        <input type="text" class="form-control" name="keyword" placeholder="Keywords: Django, Web" required>
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control" name="location" placeholder="Location: City, State" required>
+    </div>
+    <button type="submit" class="btn btn-default">Search</button>
 </form>
 
 
-
-
-
 <div style="margin-top: 40px">
-{% for job in jobList %}
-    <div class="center">
-        <div style="float: left">
-        <p style="margin-bottom: 0px;"><span class="title_name"><strong>{{ job.title }}</strong></span></p>
-            {% if job.company %}
-            <span class="smallGrayFont">{{ job.company }}- </span>
+    {% for job in jobList %}
+        <div class="center">
+            <div style="float: left">
+                <p style="margin-bottom: 0px;"><span class="title_name"><strong>{{ job.title }}</strong></span></p>
+                {% if job.company %}
+                    <span class="smallGrayFont">{{ job.company }}- </span>
+                {% endif %}
+                <span class="smallGrayFont">{{ job.locations }}</span>
+            </div>
+            <div class="stars" style="float: right; margin: 0px; padding: 0px">
+                <form action="">
+                    <input class="star star-5" id="star-5{{ job.id }}" type="radio" name="star"/>
+                    <label class="star star-5" for="star-5{{ job.id }}"></label>
+
+                    <input class="star star-4" id="star-4{{ job.id }}" type="radio" name="star"/>
+                    <label class="star star-4" for="star-4{{ job.id }}"></label>
+
+                    <input class="star star-3" id="star-3{{ job.id }}" type="radio" name="star"/>
+                    <label class="star star-3" for="star-3{{ job.id }}"></label>
+
+                    <input class="star star-2" id="star-2{{ job.id }}" type="radio" name="star"/>
+                    <label class="star star-2" for="star-2{{ job.id }}"></label>
+
+                    <input class="star star-1" id="star-1{{ job.id }}" type="radio" name="star"/>
+                    <label class="star star-1" for="star-1{{ job.id }}"></label>
+                </form>
+            </div>
+            <div class="description" style="margin-bottom: 10px; clear: both">
+                {% for token in job.description %}
+                    {{ token }}
+                {% endfor %}
+                <a href="{{ job.url }}" , target="_blank"> Read More..</a>
+            </div>
+            <span class="smallGrayFont">Posted {{ job.date }} ago</span>
+            {% if job.salary %}
+                <span class="smallGrayFont" style="float: right; margin-right: 2px">Rs {{ job.salary }}</span>
             {% endif %}
-            <span class="smallGrayFont">{{ job.locations }}</span>
+            <br>
+            <a><span class="greenLink" style=" color: #099e2d;">{{ job.site }}</span></a>
+            <span style="color: #666; line-height: 16px"> - {{ job.dayMonth }} - </span>
+            <span class="favLink"> Add to Favorites </span>
+            <hr class="style-four"/>
         </div>
-        <div class="stars" style="float: right; margin: 0px; padding: 0px">
-        <form action="">
-            <input class="star star-5" id="star-5{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-5" for="star-5{{ job.id }}"></label>
-
-            <input class="star star-4" id="star-4{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-4" for="star-4{{ job.id }}"></label>
-
-            <input class="star star-3" id="star-3{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-3" for="star-3{{ job.id }}"></label>
-
-            <input class="star star-2" id="star-2{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-2" for="star-2{{ job.id }}"></label>
-
-            <input class="star star-1" id="star-1{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-1" for="star-1{{ job.id }}"></label>
-        </form>
-        </div>
-        <div class="description" style="margin-bottom: 10px; clear: both">
-            {% for token in job.description %}
-                {{ token }}
-            {% endfor %}
-            <a href="{{ job.url }}", target="_blank">  Read More..</a>
-        </div>
-        <span class="smallGrayFont">Posted {{ job.date }} ago</span>
-        {% if job.salary %}
-            <span class="smallGrayFont" style="float: right; margin-right: 2px">Rs {{job.salary}}</span>
-        {% endif %}
-        <br>
-        <a><span class="greenLink" style=" color: #099e2d;">{{ job.site }}</span></a>
-        <span style="color: #666; line-height: 16px"> - {{ job.dayMonth }} - </span>
-        <span class="favLink"> Add to Favorites </span>
-        <hr class="style-four"/>
-    </div>
-{% endfor %}
+    {% endfor %}
 </div>
 </body>
 </html>

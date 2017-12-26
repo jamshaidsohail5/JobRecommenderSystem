@@ -8,12 +8,18 @@ def jobsviewing(request):
 
 
 def jobsretrieving(request):
+    print("1")
     cj = CareerjetAPIClient("en_GB");
+    print('2')
 
     if (request.method == "POST"):
+        print('3')
+
         keyword = request.POST['keyword']
         location = request.POST['location']
     else:
+        print('4')
+
         keyword = 'python'
         location = 'lahore'
     result_json = cj.search({
@@ -24,11 +30,14 @@ def jobsretrieving(request):
         'url': 'http://www.example.com/jobsearch?q=python&l=london',
         'user_agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0'
     });
+    print('5')
+
 
     now = datetime.now()
+    print('6')
+
     for job in result_json["jobs"]:
         jobPosted = job["date"]
-        print(jobPosted)
         jobPosted = datetime.strptime(jobPosted, '%a, %d %b %Y %H:%M:%S %Z')
         job["dayMonth"] = str(jobPosted.strftime('%b %d'))
         if abs((now - jobPosted).days) == 1:
@@ -37,8 +46,9 @@ def jobsretrieving(request):
             job["date"] = str(abs((now - jobPosted).seconds) / 3600) + " hours"
         else:
             job["date"] = str(abs((now - jobPosted).days)) + " days"
+            print("7")
 
-    print(result_json)
+    print("8")
     i = 0;
     for job in result_json["jobs"]:
         job["description"] = job["description"].replace('</b>', '').replace('<b>', '').split()

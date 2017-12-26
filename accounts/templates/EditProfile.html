@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EditProfile</title>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <style>
+        .header {
+            color: #36A0FF;
+            font-size: 27px;
+            padding: 10px;
+        }
+
+        .bigicon {
+            font-size: 35px;
+            color: #36A0FF;
+        }
+
+        .container1 {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 768px) {
+            .container1 {
+                width: 750px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container1 {
+                width: 970px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container1 {
+                width: 1170px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" style="margin: 0px;position: static">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">WebSiteName</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="{% url 'jobs:jobs' %}">MainPage</a></li>
+
+        </ul>
+
+
+        <ul class="nav navbar-nav navbar-right">
+
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Settings <span
+                    class="caret"></span></a>
+                <ul class="dropdown-menu">
+
+
+                    <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>
+                    <form id="logout" method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                    <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
+                    <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                    <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a></li>
+                    <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                    <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a></li>
+                    <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">
+                        {% csrf_token %}
+                        <input type="hidden"/>
+                    </form>
+
+
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+
+
+<div class="container4">
+    <div class="row4">
+        <div class="col-md-12">
+            <div class="well well-sm">
+
+                <form class="form-horizontal" method="post">
+                    <fieldset>
+                        <legend>Change Profile</legend>
+
+                        {% if error %}
+                            <p style="color: red">{{ error }}</p>
+                            <br/>
+                            <br/>
+                        {% endif %}
+
+                        {% for user in UserRecord.all %}
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="name" name="name" type="text" value="{{ user.name }}"
+                                           class="form-control">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="dob" name="dob" type="text" value="{{ user.dateofbirth }}"
+                                           class="form-control">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <select id="gender" name="gender" class="form-control">
+                                        <option value="male" {% if flag %} selected = "selected" {% endif %}>Male</option>
+                                        <option value="female"{% if flag1 %} selected = "selected" {% endif %} >Female</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="email" name="email" type="email" value="{{ user.email }}"
+                                           class="form-control">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="password" name="password" type="text" value="{{ user.password }}"
+                                           class="form-control">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="country" name="country" type="text" value="{{ user.country }}"
+                                           class="form-control">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <input id="City" name="City" type="text" value="{{ user.city }}"
+                                           class="form-control">
+                                </div>
+                            </div>
+
+
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <div class="text-left">
+                                        <input type="button" class="btn btn-primary" value='Add Skill' id='addskill'/>
+                                        <input type='button' class="btn btn-danger" value='Remove Skill'
+                                               id='removeskill'>
+                                    </div>
+
+                                    <div class="container2">
+                                        <div class="row2">
+                                            <div class="col-lg-3">
+                                                <div class="col-xs-10">
+
+
+
+                                                        <input type="text" class="form-control" name="skills[]"
+                                                               value="{{ user.skills.index }}" required/>
+
+
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <div class="text-left">
+                                        <input type="button" class="btn btn-primary" value='Add Interest'
+                                               id='addinterest'/>
+                                        <input type='button' class="btn btn-danger" value='Remove Interest'
+                                               id='removeinterest'>
+                                    </div>
+                                    <div class="container3">
+                                        <div class="row3">
+                                            <div class="col-lg-3">
+                                                <div class="col-xs-10">
+                                                    {% for interest in user.interests %}
+                                                        <input type="text" class="form-control" name="interests[]"
+                                                               value="{{ interest }}" required/>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <h4>WorkExperiences</h4>
+                                    <div class="text-left">
+                                        <input type="button" class="btn btn-primary" value='Add Experience'
+                                               id='addButton'/>
+                                        <input type='button' class="btn btn-danger" value='Remove Experience'
+                                               id='removeButton'>
+                                    </div>
+                                    <hr>
+                                    <div class="container">
+                                        <div class="row">
+
+
+                                            {% for work in UserExperience.all %}
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="text" class="form-control" name="Company[]"
+                                                               value="{{ work.company }}"
+                                                               required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="text" class="form-control" name="Position[]"
+                                                               value="{{ work.position }}"
+                                                               required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="date" class="form-control" name="startdates[]"
+                                                               value="{{ work.startDate }}" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="date" class="form-control" name="enddates[]"
+                                                               value="{{ work.endDate }}"
+                                                               required/>
+                                                    </div>
+                                                </div>
+
+                                            {% endfor %}
+
+
+
+
+                                            <hr/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                    <h4>Educations</h4>
+                                    <div class="text-left">
+                                        <input type="button" class="btn btn-primary"
+                                               value='Add Education'
+                                               id='addEducation'/>
+                                        <input type='button' class="btn btn-danger"
+                                               value='Remove Education'
+                                               id='removeEducation'>
+                                    </div>
+                                    <hr/>
+                                    <div class="container1">
+                                        <div class="row1">
+
+
+                                            {% for edu in UserEducation.all %}
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="text" class="form-control"
+                                                               name="degreenames[]"
+                                                               value="{{ edu.degree }}" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="text" class="form-control"
+                                                               name="institution[]"
+                                                               value="{{ edu.institution }}" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="date" class="form-control"
+                                                               name="startdates1[]"
+                                                               value="{{ edu.startdateedu }}" required/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="col-xs-10">
+                                                        <input type="date" class="form-control"
+                                                               name="enddates1[]"
+                                                               value="{{ edu.enddateedu }}" required/>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+
+
+
+                                            <hr/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+
+                            <div class="form-group">
+                                <div class="col-md-8">
+                                <textarea class="form-control" id="objstat" name="objstat"
+                                          placeholder="Objective Statement"
+                                          rows="7"></textarea>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary btn-lg">Save Changes
+                                    </button>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var $container = $('.container');
+    var $row = $('.row');
+    var $add = $('#addButton');
+    var $remove = $('#removeButton');
+    var $focused;
+
+    $container.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+    $add.on('click', function () {
+        var $newRow = $row.clone().insertAfter('.row:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+    $remove.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+
+
+        }
+    });
+
+
+    var $container1 = $('.container1');
+    var $row1 = $('.row1');
+    var $addedu = $('#addEducation');
+    var $removeedu = $('#removeEducation');
+
+
+    $container1.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addedu.on('click', function () {
+        var $newRow = $row1.clone().insertAfter('.row1:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+
+    $removeedu.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row1');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+
+    // for skills
+
+    var $container2 = $('.container2');
+    var $row2 = $('.row2');
+    var $addskill = $('#addskill');
+    var $removeskill = $('#removeskill');
+
+
+    $container2.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addskill.on('click', function () {
+        var $newRow = $row2.clone().insertAfter('.row2:last');
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+
+    $removeskill.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row2');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+    // for interest
+
+
+    var $container3 = $('.container3');
+    var $row3 = $('.row3');
+    var $addinterest = $('#addinterest');
+    var $removeinterest = $('#removeinterest');
+
+
+    $container3.on('click', 'input', function () {
+        $focused = $(this);
+    });
+
+
+    $addinterest.on('click', function () {
+        var $newRow = $row3.clone().insertAfter('.row3:last');
+
+
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
+    });
+
+
+    $removeinterest.on('click', function () {
+        if (!$focused) {
+            alert('Select a row to delete (click en input with it)');
+            return;
+        }
+        var $currentRow = $focused.closest('.row3');
+        if ($currentRow.index() === 0) {
+            alert("You can't remove first row");
+        } else {
+            $currentRow.remove();
+            $focused = null;
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
