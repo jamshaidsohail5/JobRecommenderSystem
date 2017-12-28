@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import render, redirect, render_to_response
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -82,13 +83,7 @@ def loginview(request):
             login(request, user)
             username = None
             if request.user.is_authenticated():
-                # username = request.user.username
-                # UserRecord = models.signupModel.objects.filter(email=username)
-                # print("1")
-                # print(UserRecord[0].name)
-                # print("2")
                 return render(request, 'jobs.html')
-                # return render(request, 'MainPage.html', {'UserRecord': UserRecord})
         else:
             return render(request, 'Signinform.html', {'error': 'The user name and password didn\'t match.'})
     else:
@@ -124,16 +119,185 @@ def editprofile(request):
         UserRecord = models.signupModel.objects.filter(email=username)
         UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
         UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
-        print(UserRecord[0].gender)
+        skills = UserRecord[0].skills.replace('"', '').replace('[', '').replace(']', '').split(",")
+        interests1 = UserRecord[0].interests.replace("'", "").replace(" ", "").replace("[", "").replace("]", "").split(
+            ",")
+
         if UserRecord[0].gender == 'male':
             flag = True
-            print("1")
         else:
-            print("2")
             flag1 = True
         return render(request, 'EditProfile.html', {'UserRecord': UserRecord,
                                                     'UserEducation': UserEducations,
-                                                    'UserExperience': UserExperiences, "flag": flag, "flag1": flag1})
+                                                    'UserExperience': UserExperiences,
+                                                    "flag": flag,
+                                                    "flag1": flag1,
+                                                    "Skills": skills,
+                                                    "Interests": interests1
+                                                    })
+
+
+@transaction.atomic
+def updateinformation(request):
+    flag = False
+    flag1 = False
+    if request.method == "POST":
+        if request.user.is_authenticated():
+            username = request.user.username
+            if username == request.POST['email']:
+                # Deleting the models from the signupModel,Django provided model
+                # Deleting the Signup model automatically deletes the WorkExperiences,Educations Model
+                User.objects.filter(username=username).delete()
+                signupModel.objects.filter(email=username).delete()
+
+                # Creating Everything new from here on
+                user1 = User.objects.create_user(request.POST['email'], password=request.POST['password'])
+                # Creating the user Signup Model
+                signUpModel = signupModel.objects.create(user=user1, name=request.POST['name'],
+                                                         dateofbirth=request.POST['dob'],
+                                                         gender=request.POST.get('gender', None),
+                                                         email=request.POST['email'],
+                                                         password=request.POST['password'],
+                                                         skills=json.dumps(request.POST.getlist('skills[]')),
+                                                         interests=request.POST.getlist('interests[]'),
+                                                         objectivestatement=request.POST['objstat'],
+                                                         country=request.POST['country'], city=request.POST['City'])
+
+                signUpModel.save()
+
+                # Getting the list from the input tags
+                listofcompanies = request.POST.getlist('Company[]')
+                listofpositions = request.POST.getlist('Position[]')
+                listofstartdates = request.POST.getlist('startdates[]')
+                listofenddates = request.POST.getlist('enddates[]')
+
+                listofdegrees = request.POST.getlist('degreenames[]')
+                listofinstitution = request.POST.getlist('institution[]')
+                listofstartdate1 = request.POST.getlist('startdates1[]')
+                listofenddate1 = request.POST.getlist('enddates1[]')
+
+                ArrayContainingExperiencesObject = []
+                # Creating objects for the users
+                for i in range(0, len(listofcompanies)):
+                    temp = workexperienceModel.objects.create(id=None,
+                                                              company=listofcompanies[i],
+                                                              position=listofpositions[i],
+                                                              startDate=listofstartdates[i],
+                                                              endDate=listofenddates[i],
+                                                              UserExperience=signUpModel)
+                    ArrayContainingExperiencesObject.append(temp)
+
+                for j in range(1, len(ArrayContainingExperiencesObject)):
+                    ArrayContainingExperiencesObject[j].save()
+
+                ArrayContainingEducationObject = []
+                for i in range(0, len(listofdegrees)):
+                    temp1 = Education.objects.create(id=None, degree=listofdegrees[i], institution=listofinstitution[i],
+                                                     startdateedu=listofstartdate1[i],
+                                                     enddateedu=listofenddate1[i], UserEducation=signUpModel)
+                    ArrayContainingEducationObject.append(temp1)
+
+                for k in range(1, len(ArrayContainingEducationObject)):
+                    ArrayContainingEducationObject[k].save()
+
+                return render(request, 'jobs.html',
+                              {'error': "Bio Updated Successfully"})
+            else:
+                flag = username_present(request.POST['email'])
+                if flag == True:
+                    username = request.user.username
+                    UserRecord = models.signupModel.objects.filter(email=username)
+                    UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
+                    UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
+                    skills = UserRecord[0].skills.replace('"', '').replace('[', '').replace(']', '').split(",")
+                    interests1 = UserRecord[0].interests.replace("'", "").replace(" ", "").replace("[", "").replace("]",
+                                                                                                                    "").split(
+                        ",")
+
+                    if UserRecord[0].gender == 'male':
+                        flag = True
+                    else:
+                        flag1 = True
+
+                    return render(request, 'EditProfile.html', {'UserRecord': UserRecord,
+                                                                'UserEducation': UserEducations,
+                                                                'UserExperience': UserExperiences,
+                                                                "flag": flag,
+                                                                "flag1": flag1,
+                                                                "Skills": skills,
+                                                                "Interests": interests1,
+                                                                "error": "Email already taken please try a different email!"
+                                                                })
+                else:
+
+                    # Deleting the models from the signupModel,Django provided model
+                    # Deleting the Signup model automatically deletes the WorkExperiences,Educations Model
+                    User.objects.filter(username=username).delete()
+                    signupModel.objects.filter(email=username).delete()
+
+                    # Creating Everything new from here on
+                    user1 = User.objects.create_user(request.POST['email'], password=request.POST['password'])
+                    # Creating the user Signup Model
+                    signUpModel = signupModel.objects.create(user=user1, name=request.POST['name'],
+                                                             dateofbirth=request.POST['dob'],
+                                                             gender=request.POST.get('gender', None),
+                                                             email=request.POST['email'],
+                                                             password=request.POST['password'],
+                                                             skills=json.dumps(request.POST.getlist('skills[]')),
+                                                             interests=request.POST.getlist('interests[]'),
+                                                             objectivestatement=request.POST['objstat'],
+                                                             country=request.POST['country'], city=request.POST['City'])
+
+                    signUpModel.save()
+
+                    # Getting the list from the input tags
+                    listofcompanies = request.POST.getlist('Company[]')
+                    listofpositions = request.POST.getlist('Position[]')
+                    listofstartdates = request.POST.getlist('startdates[]')
+                    listofenddates = request.POST.getlist('enddates[]')
+
+                    listofdegrees = request.POST.getlist('degreenames[]')
+                    listofinstitution = request.POST.getlist('institution[]')
+                    listofstartdate1 = request.POST.getlist('startdates1[]')
+                    listofenddate1 = request.POST.getlist('enddates1[]')
+
+                    ArrayContainingExperiencesObject = []
+                    # Creating objects for the users
+                    for i in range(0, len(listofcompanies)):
+                        temp = workexperienceModel.objects.create(id=None,
+                                                                  company=listofcompanies[i],
+                                                                  position=listofpositions[i],
+                                                                  startDate=listofstartdates[i],
+                                                                  endDate=listofenddates[i],
+                                                                  UserExperience=signUpModel)
+                        ArrayContainingExperiencesObject.append(temp)
+
+                    for j in range(1, len(ArrayContainingExperiencesObject)):
+                        ArrayContainingExperiencesObject[j].save()
+
+                    ArrayContainingEducationObject = []
+                    for i in range(0, len(listofdegrees)):
+                        temp1 = Education.objects.create(id=None,degree=listofdegrees[i],
+                                                         institution=listofinstitution[i],
+                                                         startdateedu=listofstartdate1[i],
+                                                         enddateedu=listofenddate1[i], UserEducation=signUpModel)
+                        ArrayContainingEducationObject.append(temp1)
+
+                    for k in range(1, len(ArrayContainingEducationObject)):
+                        ArrayContainingEducationObject[k].save()
+
+                    return render(request, 'jobs.html',
+                                  {'error': "Bio Updated Successfully"})
+
+    return render(request, 'EditProfile.html')
+
+
+def username_present(username):
+    try:
+        User.objects.get(username=username)
+        return True
+    except User.DoesNotExist:
+        return False
 
 # return render_to_response("MainPage.html", {
 #     'UserRecord': UserRecord, 'UserEducation': UserEducations,

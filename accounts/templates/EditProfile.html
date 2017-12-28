@@ -111,7 +111,10 @@
         <div class="col-md-12">
             <div class="well well-sm">
 
-                <form class="form-horizontal" method="post">
+                <form class="form-horizontal" method="post" action="{% url 'accounts:updateinfo' %}">
+
+                    {% csrf_token %}
+
                     <fieldset>
                         <legend>Change Profile</legend>
 
@@ -121,12 +124,14 @@
                             <br/>
                         {% endif %}
 
+
+
                         {% for user in UserRecord.all %}
 
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <input id="name" name="name" type="text" value="{{ user.name }}"
-                                           class="form-control">
+                                           class="form-control" placeholder="name" required>
                                 </div>
                             </div>
 
@@ -134,16 +139,20 @@
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <input id="dob" name="dob" type="text" value="{{ user.dateofbirth }}"
-                                           class="form-control">
+                                           class="form-control" placeholder="DateofBirth" required>
                                 </div>
                             </div>
+
+
+
 
 
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <select id="gender" name="gender" class="form-control">
-                                        <option value="male" {% if flag %} selected = "selected" {% endif %}>Male</option>
-                                        <option value="female"{% if flag1 %} selected = "selected" {% endif %} >Female</option>
+                                        <option value="male" {% if flag %} selected="selected" {% endif %}>Male</option>
+                                        <option value="female"{% if flag1 %} selected="selected" {% endif %} >Female
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -152,7 +161,7 @@
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <input id="email" name="email" type="email" value="{{ user.email }}"
-                                           class="form-control">
+                                           class="form-control" placeholder="Email" required>
                                 </div>
                             </div>
 
@@ -160,15 +169,17 @@
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <input id="password" name="password" type="text" value="{{ user.password }}"
-                                           class="form-control">
+                                           class="form-control" placeholder="Password" required>
                                 </div>
                             </div>
+
+
 
 
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <input id="country" name="country" type="text" value="{{ user.country }}"
-                                           class="form-control">
+                                           class="form-control" placeholder="country" required>
                                 </div>
                             </div>
 
@@ -176,12 +187,18 @@
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <input id="City" name="City" type="text" value="{{ user.city }}"
-                                           class="form-control">
+                                           class="form-control" placeholder="city" required>
                                 </div>
                             </div>
 
 
                             <hr>
+
+
+
+
+
+
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <div class="text-left">
@@ -195,12 +212,10 @@
                                             <div class="col-lg-3">
                                                 <div class="col-xs-10">
 
-
-
+                                                    {% for skills in Skills %}
                                                         <input type="text" class="form-control" name="skills[]"
-                                                               value="{{ user.skills.index }}" required/>
-
-
+                                                               value="{{ skills }}" required/>
+                                                    {% endfor %}
 
 
                                                 </div>
@@ -216,27 +231,35 @@
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <div class="text-left">
+
                                         <input type="button" class="btn btn-primary" value='Add Interest'
                                                id='addinterest'/>
                                         <input type='button' class="btn btn-danger" value='Remove Interest'
                                                id='removeinterest'>
+
                                     </div>
+
                                     <div class="container3">
                                         <div class="row3">
-                                            <div class="col-lg-3">
-                                                <div class="col-xs-10">
-                                                    {% for interest in user.interests %}
-                                                        <input type="text" class="form-control" name="interests[]"
+                                            <div class="col-lg-3 temp1" id="temp1">
+
+                                                {% for interest in Interests %}
+                                                    <div class="col-xs-10">
+                                                        <input id="{{ forloop.counter }}" type="text"
+                                                               class="form-control " name="interests[]"
                                                                value="{{ interest }}" required/>
-                                                    {% endfor %}
-                                                </div>
+                                                    </div>
+                                                {% endfor %}
+
                                             </div>
                                         </div>
                                         <hr/>
                                     </div>
+
                                 </div>
                             </div>
                             <hr>
+
                             <div class="form-group">
                                 <div class="col-md-8">
                                     <h4>WorkExperiences</h4>
@@ -306,7 +329,6 @@
                                     <div class="container1">
                                         <div class="row1">
 
-
                                             {% for edu in UserEducation.all %}
                                                 <div class="col-lg-3">
                                                     <div class="col-xs-10">
@@ -338,8 +360,6 @@
                                                 </div>
                                             {% endfor %}
 
-
-
                                             <hr/>
                                         </div>
                                     </div>
@@ -351,14 +371,16 @@
                                 <div class="col-md-8">
                                 <textarea class="form-control" id="objstat" name="objstat"
                                           placeholder="Objective Statement"
-                                          rows="7"></textarea>
+                                          rows="7"
+                                >{{ user.objectivestatement }}</textarea>
                                 </div>
                             </div>
 
 
                             <div class="form-group">
                                 <div class="col-md-12">
-                                    <button type="submit" class="btn btn-primary btn-lg">Save Changes
+                                    <button type="submit" class="btn btn-primary btn-lg"
+                                    >Save Changes
                                     </button>
                                 </div>
                             </div>
@@ -481,10 +503,12 @@
 
     // for interest
 
-
     var $container3 = $('.container3');
     var $row3 = $('.row3');
     var $addinterest = $('#addinterest');
+
+    var $temp = $('.temp');
+
     var $removeinterest = $('#removeinterest');
 
 
@@ -495,11 +519,19 @@
 
     $addinterest.on('click', function () {
         var $newRow = $row3.clone().insertAfter('.row3:last');
-
-
         $newRow.find('input').each(function () {
             this.value = '';
         });
+
+        {#        var lastChild = document.getElementById("temp1").lastChild;#}
+        {#        var lastChildID = lastChild.id;#}
+        {#        var newId = lastChildID + 1;#}
+        {#        var x = document.createElement("INPUT");#}
+        {#        x.setAttribute("type", "text");#}
+        {#        x.setAttribute("id", newId);#}
+        {#        x.setAttribute("class","form-control");#}
+        {#        document.getElementById("temp1").appendChild(x);#}
+
     });
 
 
@@ -517,6 +549,7 @@
         }
 
     });
+
 
 </script>
 

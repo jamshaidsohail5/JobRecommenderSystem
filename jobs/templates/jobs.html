@@ -173,7 +173,6 @@
                     </form>
 
 
-
                     <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a></li>
                     <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">
                         {% csrf_token %}
@@ -191,6 +190,12 @@
 
 <body>
 <h1 align="center">Job Postings</h1>
+{% if error %}
+    <p style="color: red">{{ error }}</p>
+    <br/>
+    <br/>
+{% endif %}
+
 
 <form class="form-inline" style="text-align: center" action="{% url 'jobs:jobsretrieve' %}" method="post">
     {% csrf_token %}
