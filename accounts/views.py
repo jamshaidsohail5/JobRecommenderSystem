@@ -97,28 +97,27 @@ def logoutview(request):
 
 
 def mainpageview(request):
-    if request.user.is_authenticated():
-        username = request.user.username
-        UserRecord = models.signupModel.objects.filter(email=username)
-        UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
-        UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
-        print("agya4")
+    print("aya 1")
+    print(request.user)
+    print(request.user.username)
 
-        return render(request, 'MainPage.html', {'UserRecord': UserRecord,
-                                                 'UserEducation': UserEducations,
-                                                 'UserExperience': UserExperiences})
-
-
-def editprofile(request):
-    # Now here i ll retrieve all the credentials of the user from the
-    # database and will display them on the page
     flag = False
     flag1 = False
+
     if request.user.is_authenticated():
+        print("aya 2")
         username = request.user.username
+        print("aya 3")
+
         UserRecord = models.signupModel.objects.filter(email=username)
+        print("aya 4")
+
         UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
+        print("aya 5")
+
         UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
+        print("agy 6")
+
         skills = UserRecord[0].skills.replace('"', '').replace('[', '').replace(']', '').split(",")
         interests1 = UserRecord[0].interests.replace("'", "").replace(" ", "").replace("[", "").replace("]", "").split(
             ",")
@@ -127,6 +126,49 @@ def editprofile(request):
             flag = True
         else:
             flag1 = True
+
+        return render(request, 'MainPage.html', {'UserRecord': UserRecord,
+                                                 'UserEducation': UserEducations,
+                                                 'UserExperience': UserExperiences,
+                                                 "flag": flag,
+                                                 "flag1": flag1,
+                                                 "Skills": skills,
+                                                 "Interests": interests1
+                                                 })
+
+
+def editprofile(request):
+    # Now here i ll retrieve all the credentials of the user from the
+    # database and will display them on the page
+    print("aya 7")
+    print(request.user)
+    print(request.user.username)
+
+    flag = False
+    flag1 = False
+    if request.user.is_authenticated():
+        print("aya 8")
+
+        username = request.user.username
+        print("aya 9")
+
+        UserRecord = models.signupModel.objects.filter(email=username)
+        print("aya 10")
+
+        UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
+        UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
+
+        skills = UserRecord[0].skills.replace('"', '').replace('[', '').replace(']', '').split(",")
+        interests1 = UserRecord[0].interests.replace("'", "").replace(" ", "").replace("[", "").replace("]", "").split(
+            ",")
+        print("aya 11")
+
+        if UserRecord[0].gender == 'male':
+            flag = True
+        else:
+            flag1 = True
+        print("aya 12")
+
         return render(request, 'EditProfile.html', {'UserRecord': UserRecord,
                                                     'UserEducation': UserEducations,
                                                     'UserExperience': UserExperiences,
@@ -137,7 +179,6 @@ def editprofile(request):
                                                     })
 
 
-@transaction.atomic
 def updateinformation(request):
     flag = False
     flag1 = False
@@ -147,11 +188,19 @@ def updateinformation(request):
             if username == request.POST['email']:
                 # Deleting the models from the signupModel,Django provided model
                 # Deleting the Signup model automatically deletes the WorkExperiences,Educations Model
+                # print(request.user.username)
+
+                logout(request)
+
                 User.objects.filter(username=username).delete()
-                signupModel.objects.filter(email=username).delete()
+                print(request.user.username)
+
+                # signupModel.objects.filter(email=username).delete()
 
                 # Creating Everything new from here on
                 user1 = User.objects.create_user(request.POST['email'], password=request.POST['password'])
+                print(request.user.username)
+
                 # Creating the user Signup Model
                 signUpModel = signupModel.objects.create(user=user1, name=request.POST['name'],
                                                          dateofbirth=request.POST['dob'],
@@ -200,6 +249,8 @@ def updateinformation(request):
                 for k in range(1, len(ArrayContainingEducationObject)):
                     ArrayContainingEducationObject[k].save()
 
+                login(request, user1)
+
                 return render(request, 'jobs.html',
                               {'error': "Bio Updated Successfully"})
             else:
@@ -230,10 +281,12 @@ def updateinformation(request):
                                                                 })
                 else:
 
+                    logout(request)
+
                     # Deleting the models from the signupModel,Django provided model
                     # Deleting the Signup model automatically deletes the WorkExperiences,Educations Model
                     User.objects.filter(username=username).delete()
-                    signupModel.objects.filter(email=username).delete()
+                    #   signupModel.objects.filter(email=username).delete()
 
                     # Creating Everything new from here on
                     user1 = User.objects.create_user(request.POST['email'], password=request.POST['password'])
@@ -277,7 +330,7 @@ def updateinformation(request):
 
                     ArrayContainingEducationObject = []
                     for i in range(0, len(listofdegrees)):
-                        temp1 = Education.objects.create(id=None,degree=listofdegrees[i],
+                        temp1 = Education.objects.create(id=None, degree=listofdegrees[i],
                                                          institution=listofinstitution[i],
                                                          startdateedu=listofstartdate1[i],
                                                          enddateedu=listofenddate1[i], UserEducation=signUpModel)
@@ -285,6 +338,7 @@ def updateinformation(request):
 
                     for k in range(1, len(ArrayContainingEducationObject)):
                         ArrayContainingEducationObject[k].save()
+                    login(request, user1)
 
                     return render(request, 'jobs.html',
                                   {'error': "Bio Updated Successfully"})
@@ -298,6 +352,12 @@ def username_present(username):
         return True
     except User.DoesNotExist:
         return False
+
+def sendtohome(request):
+    if request.method == "POST":
+        return render(request,"jobs.html")
+
+
 
 # return render_to_response("MainPage.html", {
 #     'UserRecord': UserRecord, 'UserEducation': UserEducations,

@@ -5,7 +5,7 @@ from JobRecommenderSystem import settings
 
 
 class signupModel(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     dateofbirth = models.CharField(max_length=100)
     gender = models.CharField(max_length=100)
