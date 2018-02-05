@@ -210,15 +210,30 @@
 
 
 <div style="margin-top: 40px">
+
+
     {% for job in jobList %}
-        <div class="center">
+        <div class="center" >
+
             <div style="float: left">
-                <p style="margin-bottom: 0px;"><span class="title_name"><strong>{{ job.title }}</strong></span></p>
+                <p style="margin-bottom: 0px;"><span class="title_name"><strong>{{ job.jobTitle }}</strong></span></p>
                 {% if job.company %}
-                    <span class="smallGrayFont">{{ job.company }}- </span>
+                    <span class="smallGrayFont">{{ job.jobCompany }}- </span>
                 {% endif %}
-                <span class="smallGrayFont">{{ job.locations }}</span>
+                <span class="smallGrayFont" style="font-size: 15px">ID: {{ job.id }}</span>
+                <br>
+                <span class="smallGrayFont" style="font-size: 15px">Location: {{ job.jobLocation }}</span>
+                <br>
+                <span class="smallGrayFont" style="font-size: 15px">Salary: {{ job.jobSalary }}</span>
+                <br>
+                <!--<span class="smallGrayFont">{{ job.jobSummary }}</span>-->
+
+
+
+
             </div>
+
+
             <div class="stars" style="float: right; margin: 0px; padding: 0px">
                 <form action="">
                     <input class="star star-5" id="star-5{{ job.id }}" type="radio" name="star"/>
@@ -237,23 +252,37 @@
                     <label class="star star-1" for="star-1{{ job.id }}"></label>
                 </form>
             </div>
+
+
             <div class="description" style="margin-bottom: 10px; clear: both">
-                {% for token in job.description %}
+               <!-- {% for token in job.jobSalary %}
                     {{ token }}
                 {% endfor %}
-                <a href="{{ job.url }}" , target="_blank"> Read More..</a>
+                -->
+                <a href="" , target="_blank"> Description...</a>
             </div>
-            <span class="smallGrayFont">Posted {{ job.date }} ago</span>
-            {% if job.salary %}
-                <span class="smallGrayFont" style="float: right; margin-right: 2px">Rs {{ job.salary }}</span>
+
+
+            <!--<span class="smallGrayFont">Posted {{ job.jobSalary }} ago</span>
+            {% if job.jobSalary %}
+                <span class="smallGrayFont" style="float: right; margin-right: 2px">Rs {{ job.jobSalary }}</span>
             {% endif %}
-            <br>
-            <a><span class="greenLink" style=" color: #099e2d;">{{ job.site }}</span></a>
-            <span style="color: #666; line-height: 16px"> - {{ job.dayMonth }} - </span>
+             <br>
+
+            -->
+
+
+           <!-- <a><span class="greenLink" style=" color: #099e2d;">{{ job.jobSalary }}</span></a>
+            <span style="color: #666; line-height: 16px"> - {{ job.jobSalary }} - </span>
             <span class="favLink"> Add to Favorites </span>
+            -->
             <hr class="style-four"/>
+
+
         </div>
     {% endfor %}
+
+
 </div>
 </body>
 </html>

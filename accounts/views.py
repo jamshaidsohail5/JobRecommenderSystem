@@ -9,6 +9,7 @@ from accounts.models import signupModel, workexperienceModel, Education
 import json as json1
 
 
+
 # from accounts.models import signupModel
 def signup(request):
     if request.method == "POST":
@@ -353,11 +354,10 @@ def username_present(username):
     except User.DoesNotExist:
         return False
 
+
 def sendtohome(request):
     if request.method == "POST":
-        return render(request,"jobs.html")
-
-
+        return render(request, "jobs.html")
 
 # return render_to_response("MainPage.html", {
 #     'UserRecord': UserRecord, 'UserEducation': UserEducations,
