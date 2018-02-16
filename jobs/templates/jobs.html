@@ -213,27 +213,103 @@
 
 
     {% for job in jobList %}
-        <div class="center" >
+        <div class="center">
 
-            <div style="float: left">
-                <p style="margin-bottom: 0px;"><span class="title_name"><strong>{{ job.jobTitle }}</strong></span></p>
-                {% if job.company %}
-                    <span class="smallGrayFont">{{ job.jobCompany }}- </span>
-                {% endif %}
-                <span class="smallGrayFont" style="font-size: 15px">ID: {{ job.id }}</span>
-                <br>
-                <span class="smallGrayFont" style="font-size: 15px">Location: {{ job.jobLocation }}</span>
-                <br>
-                <span class="smallGrayFont" style="font-size: 15px">Salary: {{ job.jobSalary }}</span>
-                <br>
-                <!--<span class="smallGrayFont">{{ job.jobSummary }}</span>-->
+            <form id="jobData{{ forloop.counter }}" method="post" action="{% url 'jobs:jobsdisplay' %}">
+                {% csrf_token %}
+
+
+                <div style="float: left;">
 
 
 
+                    <div class="form-group">
+                        <label>ID:</label>
+                        <input type="text" class="form-control" name="jobId+ {{ forloop.counter }}"
+                               value="{{ job.id }}"
+                               readonly>
+                    </div>
 
-            </div>
+
+                    <div class="form-group">
+                        <label>JobTitle:</label>
+                        <input type="text" class="form-control" name="Titlename +{{ forloop.counter }}"
+                               value="{{ job.jobTitle }}"
+                               readonly>
+                    </div>
 
 
+                    <div class="form-group">
+                        <label>JobCompany:</label>
+                        <input type="text" class="form-control" name="CompanyName+ {{ forloop.counter }}"
+                               value="{{ job.jobCompany }}"
+                               readonly>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>JobLocation:</label>
+                        <input type="text" class="form-control" name="jobLocation+ {{ forloop.counter }}"
+                               value="{{ job.jobLocation }}"
+                               readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>JobSalary:</label>
+                        <input type="text" class="form-control" value="{{ job.jobSalary }}"
+                               name="jobSalary+ {{ forloop.counter }}"
+                               readonly>
+                    </div>
+
+
+                    <div class="form-group" style="display: none">
+                        <label>JobDescription:</label>
+                        <input type="text" class="form-control" value="{{ job.jobSummary }}"
+                               name="jobDescription+ {{ forloop.counter }}"
+                               readonly>
+                    </div>
+
+
+                    <!--
+                    <input style="font-size: 15px" name="jobId+ {{ forloop.counter0 }}" value="{{ job.id }}"/>
+
+                    <input style="margin-bottom: 0px;" name="Titlename +{{ forloop.counter0 }}"
+                           value="{{ job.jobTitle }}"/>
+
+
+
+
+
+                    {% if job.company %}
+                        <input name="CompanyName+ {{ forloop.counter0 }}" value="{{ job.jobCompany }}"/>
+                    {% endif %}
+
+
+
+
+
+                    <br>
+                    <input style="font-size: 15px" name="jobLocation+ {{ forloop.counter0 }}"
+                           value="{{ job.jobLocation }}"/>
+                    <br>
+
+
+                    <input style="font-size: 15px" value="{{ job.jobSalary }}"
+                           name="jobSalary+ {{ forloop.counter0 }}"/>
+
+
+                    <input value="{{ job.jobSummary }}" style="font-size: 15px;display: none"
+                           name="jobDescription+ {{ forloop.counter0 }}"/>
+                 -->
+
+                    <br>
+
+                </div>
+
+
+            </form>
+
+            <!--
             <div class="stars" style="float: right; margin: 0px; padding: 0px">
                 <form action="">
                     <input class="star star-5" id="star-5{{ job.id }}" type="radio" name="star"/>
@@ -252,14 +328,16 @@
                     <label class="star star-1" for="star-1{{ job.id }}"></label>
                 </form>
             </div>
+            -->
 
 
             <div class="description" style="margin-bottom: 10px; clear: both">
-               <!-- {% for token in job.jobSalary %}
+                <!-- {% for token in job.jobSalary %}
                     {{ token }}
                 {% endfor %}
                 -->
-                <a href="" , target="_blank"> Description...</a>
+                <a href="#" onClick="document.getElementById('jobData{{ forloop.counter }}').submit()" ,
+                   target="_blank"> Description...</a>
             </div>
 
 
@@ -272,7 +350,7 @@
             -->
 
 
-           <!-- <a><span class="greenLink" style=" color: #099e2d;">{{ job.jobSalary }}</span></a>
+            <!-- <a><span class="greenLink" style=" color: #099e2d;">{{ job.jobSalary }}</span></a>
             <span style="color: #666; line-height: 16px"> - {{ job.jobSalary }} - </span>
             <span class="favLink"> Add to Favorites </span>
             -->
