@@ -31,30 +31,8 @@ def jobsviewing(request):
     return render(request, 'jobs.html')
 
 
+# This Function Stores Implicit Feedback
 def displayingJobDetail(request):
-
-
-    #
-    # # Step 2: Create sample data
-    # names = ['Kitchen', 'Animal', 'State', 'Tastey', 'Big', 'City', 'Fish', 'Pizza', 'Goat', 'Salty', 'Sandwich',
-    #          'Lazy', 'Fun']
-    # company_type = ['LLC', 'Inc', 'Company', 'Corporation']
-    # company_cuisine = ['Pizza', 'Bar Food', 'Fast Food', 'Italian', 'Mexican', 'American', 'Sushi Bar', 'Vegetarian']
-    #
-    #
-    # for x in range(1, 501):
-    #     business = {
-    #         'name': names[random.randint(0, (len(names) - 1))] + ' ' + names[random.randint(0, (len(names) - 1))] + ' ' +
-    #                 company_type[random.randint(0, (len(company_type) - 1))],
-    #         'rating': random.randint(1, 5),
-    #         'cuisine': company_cuisine[random.randint(0, (len(company_cuisine) - 1))]
-    #     }
-    #     result = db.reviews.insert_one(business)
-    #
-    # print('finished creating 100 business reviews')
-    # print("The saved stuff is ")
-    # print(db.collection.find({}))
-    #
     if request.method == "POST":
         global jobs
         client = MongoClient(port=27017)
@@ -68,19 +46,28 @@ def displayingJobDetail(request):
 
         # Getting the JobTitle
         Number = titleName[0].split("+")
-        job_retrieved_to_be_displayed = jobs[int(Number[1]) - 1]
-        print("Job Title is", job_retrieved_to_be_displayed.jobTitle)
+        print("Jobid id ", Number[1])
+        if int(Number[1]) != 0:
+            job_retrieved_to_be_displayed = jobs[int(Number[1]) - 1]
+        else:
+            job_retrieved_to_be_displayed = jobs[int(Number[1])]
 
+        print("Job Title is", job_retrieved_to_be_displayed.jobTitle)
 
         # Select * from jobsData where jobtitle = passedParameter
         # Checking if the Job already exists in DB or not
-        jobsData =db1.jobsData.find({"JobTitle":job_retrieved_to_be_displayed.jobTitle},{"userassignedId":1,
-                                                                                         "JobCompany":1,
-                                                                                         "JobLocation":1,
-                                                                                         "JobSalary":1,
-                                                                                         "JobSummary":1})
+        # If the job do not exist in Db then saving it in the DB
+        jobsData = db1.jobsData.find({"JobTitle": job_retrieved_to_be_displayed.jobTitle}, {"userassignedId": 1,
+                                                                                            "JobCompany": 1,
+                                                                                            "JobLocation": 1,
+                                                                                            "JobSalary": 1,
+                                                                                            "JobSummary": 1})
+
+        for doc in jobsData:
+            print(doc)
 
         if jobsData.count() == 0:
+            print("It came inside")
             Job = {
                 'userassignedId': job_retrieved_to_be_displayed.id,
                 'JobTitle': job_retrieved_to_be_displayed.jobTitle,
@@ -91,9 +78,8 @@ def displayingJobDetail(request):
             }
             result = db1.jobsDetail.insert_one(Job)
 
+        feed_back_of_user = db.reviews.find({"Username": username}, {"Username": 1, "JobTitle": 1, "ImplicitRating": 1})
 
-
-        feed_back_of_user = db.reviews.find({"Username": username},{"Username":1,"Jobtitle":1,"ImplicitRating":1})
         if feed_back_of_user.count() == 0:
             print("Nothing initially in the DB")
             implicit_feedback_count = 1
@@ -104,19 +90,33 @@ def displayingJobDetail(request):
             }
             result = db.reviews.insert_one(Feedback)
         else:
-            print("Username Records already present in the db")
+            flag = False
+            for doc in feed_back_of_user:
+                if doc['JobTitle'] == job_retrieved_to_be_displayed.jobTitle:
+                    flag = True
+                    # This means that the User has already opened this job and gave implplicit rating
+                    # So increasing the previous count Would do the job
+                    # Incrementing the Job Implicit Rating
+                    db.reviews.update(
+                        {'Username': username, 'JobTitle': job_retrieved_to_be_displayed.jobTitle},
+                        {
+                            "$inc": {"ImplicitRating": 1}
+                        }
+                    )
 
+                if flag == False:
+                    # This means the User didnt gave any rating to the same job before
+                    Feedback = {
+                        'Username': username,
+                        'JobTitle': job_retrieved_to_be_displayed.jobTitle,
+                        'ImplicitRating': 1
+                    }
+                    result = db.reviews.insert_one(Feedback)
 
-
-
-        return render(request, 'jobsDetail.html',{"jobsDetail": job_retrieved_to_be_displayed})
+        return render(request, 'jobsDetail.html', {"jobsDetail": job_retrieved_to_be_displayed})
 
 
 def jobsretrieving(request):
-    # print("1")
-    # cj = CareerjetAPIClient("en_GB");
-    # print('2')
-
     if (request.method == "POST"):
         print('3')
         keyword = request.POST['keyword']
@@ -124,14 +124,6 @@ def jobsretrieving(request):
 
         print('4')
 
-        # keyword = 'python'
-        # location = 'lahore'
-
-        # client = MongoClient('localhost:27017')
-        # db = client.JobDatabase
-
-        # desc = "web"
-        # loc = "lahore"
         r = requests.get("https://www.indeed.com/jobs?q=" + keyword + "&l=" + location,
                          proxies={"http": "http://35.196.26.166:3128"})
         data = r.text
@@ -139,21 +131,10 @@ def jobsretrieving(request):
         soup = soup.findAll("a", {"class": "turnstileLink"})
         j = 1
         global jobs
-        id = 0
-
-        title = ""
-        salary = ""
-        location = ""
-        summary = ""
-        company = ""
         for link in soup:
             jobLink = link.get("href")
             if "clk" in jobLink:
-                # db.Jobs.insert_one(
-                #     {
-                #         "ID": j,
-                #     })
-                print("ID :", j)
+
                 id = j
 
                 jobRequest = requests.get("https://www.indeed.com" + jobLink,
@@ -163,46 +144,24 @@ def jobsretrieving(request):
 
                 jobTitle = jobSoup.find("b", {"class": "jobtitle"})
 
-                # db.Jobs.update(
-                #     {"ID": j},
-                #     {"$set": {"Title": jobTitle.text}}
-                # )
-                print("Title:", jobTitle.text)
-
                 title = jobTitle.text
 
                 jobCompany = jobSoup.find("span", {"class": "company"})
                 if jobCompany:
                     company = jobCompany.text
-                    print("Company:", jobCompany.text)
-                    # db.Jobs.update(
-                    #     {"ID": j},
-                    #     {"$set": {"Company": jobCompany.text}}
-                    # )
 
                 jobLocation = jobSoup.find("span", {"class": "location"})
                 if jobLocation:
                     location = jobLocation.text
-                    print("Location:", jobLocation.text)
-                    # db.Jobs.update(
-                    #     {"ID": j},
-                    #     {"$set": {"Location": jobLocation.text}}
-                    # )
 
                 jobSalary = jobSoup.find("span", {"class": "no-wrap"})
 
                 if jobSalary:
                     salary = jobSalary.text.lstrip()
-                    # db.Jobs.update(
-                    #     {"ID": j},
-                    #     {"$set": {"Salary": jobSalary.text}}
-                    # )
-                    print("Salary:", jobSalary.text.lstrip())
 
                 jobSummary = jobSoup.find("span", {"class": "summary"})
                 if jobSummary:
                     summary = jobSummary.text.encode('utf-8')
-                    print("Summary:", jobSummary.text.encode('utf-8'))
                     # db.Jobs.update(
                     #     {"ID": j},
                     #     {"$set": {"Summary": jobSummary.text}}
