@@ -206,22 +206,29 @@
     <div class="form-group">
         <label class="col-xs-3 control-label">Job ID</label>
         <div class="col-xs-4">
-            <input type="text" class="form-control" name="firstName" placeholder="Job ID"/>
+            <input type="text" class="form-control" name="Jobid" placeholder="JobID" value="{{ jobsDetail.id }}" readonly/>
         </div>
-
-        <!--
-             <div class="col-xs-4">
-                 <input type="text" class="form-control" name="lastName" placeholder="Last name"/>
-             </div>
-
-          -->
-
     </div>
+
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Title</label>
+        <div class="col-xs-4">
+            <input type="text" class="form-control" name="Jobtitle" placeholder="Jobtitle" value="{{ jobsDetail.jobTitle }}" readonly/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Company</label>
+        <div class="col-xs-4">
+            <input type="text" class="form-control" name="Jobcompany" placeholder="JobCompany" value="{{ jobsDetail.jobCompany }}" readonly/>
+        </div>
+    </div>
+
+
 
     <div class="form-group">
         <label class="col-xs-3 control-label">Location</label>
         <div class="col-xs-5">
-            <input type="text" class="form-control" name="jobLocation" placeholder="jobLocation"/>
+            <input type="text" class="form-control" name="jobLocation" placeholder="jobLocation" value="{{ jobsDetail.jobLocation }}" readonly/>
         </div>
     </div>
 
@@ -229,7 +236,7 @@
     <div class="form-group">
         <label class="col-xs-3 control-label">Salary</label>
         <div class="col-xs-5">
-            <input type="text" class="form-control" name="jobSalary" placeholder="jobSalary"/>
+            <input type="text" class="form-control" name="jobSalary" placeholder="jobSalary" value="{{ jobsDetail.jobSalary }}" readonly/>
         </div>
     </div>
 
@@ -237,27 +244,27 @@
     <div class="form-group">
         <label class="col-xs-3 control-label">Description</label>
         <div class="col-xs-8">
-            <textarea class="form-control" name="bio" rows="5" style="width: 100%"></textarea>
+            <textarea class="form-control" name="jobSummary" rows="5" style="width: 100%" readonly> {{ jobsDetail.jobSummary }}</textarea>
         </div>
     </div>
 
 
     <div class="stars" style="float: left; margin: 0px; padding: 0px; margin-left: 270px">
         <form action="">
-            <input class="star star-5" id="star-5{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-5" for="star-5{{ job.id }}"></label>
+            <input class="star star-5" id="star-5{{ jobsDetail.id }}" type="radio" name="star"/>
+            <label class="star star-5" for="star-5{{ jobsDetail.id }}"></label>
 
-            <input class="star star-4" id="star-4{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-4" for="star-4{{ job.id }}"></label>
+            <input class="star star-4" id="star-4{{ jobsDetail.id }}" type="radio" name="star"/>
+            <label class="star star-4" for="star-4{{ jobsDetail.id }}"></label>
 
-            <input class="star star-3" id="star-3{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-3" for="star-3{{ job.id }}"></label>
+            <input class="star star-3" id="star-3{{ jobsDetail.id }}" type="radio" name="star"/>
+            <label class="star star-3" for="star-3{{ jobsDetail.id }}"></label>
 
-            <input class="star star-2" id="star-2{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-2" for="star-2{{ job.id }}"></label>
+            <input class="star star-2" id="star-2{{ jobsDetail.id }}" type="radio" name="star"/>
+            <label class="star star-2" for="star-2{{ jobsDetail.id }}"></label>
 
-            <input class="star star-1" id="star-1{{ job.id }}" type="radio" name="star"/>
-            <label class="star star-1" for="star-1{{ job.id }}"></label>
+            <input class="star star-1" id="star-1{{ jobsDetail.id }}" type="radio" name="star"/>
+            <label class="star star-1" for="star-1{{ jobsDetail.id }}"></label>
         </form>
     </div>
 

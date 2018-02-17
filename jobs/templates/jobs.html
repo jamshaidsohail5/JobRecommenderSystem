@@ -233,7 +233,7 @@
 
                     <div class="form-group">
                         <label>JobTitle:</label>
-                        <input type="text" class="form-control" name="Titlename +{{ forloop.counter }}"
+                        <input type="text" class="form-control" name="Titlename+{{ forloop.counter }}"
                                value="{{ job.jobTitle }}"
                                readonly>
                     </div>
@@ -336,7 +336,7 @@
                     {{ token }}
                 {% endfor %}
                 -->
-                <a href="#" onClick="document.getElementById('jobData{{ forloop.counter }}').submit()" ,
+                <a href="" onClick="document.getElementById('jobData{{ forloop.counter }}').submit()" ,
                    target="_blank"> Description...</a>
             </div>
 

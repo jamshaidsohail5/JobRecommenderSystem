@@ -4,7 +4,10 @@ from careerjet_api_client import CareerjetAPIClient
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
 import requests
+import random
 import re
+
+jobs = []
 
 
 class Jobs(object):
@@ -17,28 +20,96 @@ class Jobs(object):
         self.jobSalary = jobSalary
         self.jobSummary = jobSummary
 
+    def Printing_Credentials_of_Jobs(self):
+        print("Job id is", self.id)
+        print("Job title is ", self.jobTitle)
+        print("Job Company is", self.jobCompany)
+        print("Job Salary is ", self.jobSalary)
+
 
 def jobsviewing(request):
     return render(request, 'jobs.html')
 
 
 def displayingJobDetail(request):
-    if request.method == "POST":
-        titleName = [key for key in request.POST if key.startswith("Titlename")]
-        companyName = [key for key in request.POST if key.startswith("CompanyName")]
-        jobId = [key for key in request.POST if key.startswith("jobId")]
-        jobLocation = [key for key in request.POST if key.startswith("jobLocation")]
-        jobSalary = [key for key in request.POST if key.startswith("jobSalary")]
-        jobDescription = [key for key in request.POST if key.startswith("jobDescription")]
 
-        print("It enters the function again")
-        print(titleName)
-        print(companyName)
-        print(jobId)
-        print(jobLocation)
-        print(jobSalary)
-        print(jobDescription)
-        return render(request, 'jobsDetail.html')
+
+    #
+    # # Step 2: Create sample data
+    # names = ['Kitchen', 'Animal', 'State', 'Tastey', 'Big', 'City', 'Fish', 'Pizza', 'Goat', 'Salty', 'Sandwich',
+    #          'Lazy', 'Fun']
+    # company_type = ['LLC', 'Inc', 'Company', 'Corporation']
+    # company_cuisine = ['Pizza', 'Bar Food', 'Fast Food', 'Italian', 'Mexican', 'American', 'Sushi Bar', 'Vegetarian']
+    #
+    #
+    # for x in range(1, 501):
+    #     business = {
+    #         'name': names[random.randint(0, (len(names) - 1))] + ' ' + names[random.randint(0, (len(names) - 1))] + ' ' +
+    #                 company_type[random.randint(0, (len(company_type) - 1))],
+    #         'rating': random.randint(1, 5),
+    #         'cuisine': company_cuisine[random.randint(0, (len(company_cuisine) - 1))]
+    #     }
+    #     result = db.reviews.insert_one(business)
+    #
+    # print('finished creating 100 business reviews')
+    # print("The saved stuff is ")
+    # print(db.collection.find({}))
+    #
+    if request.method == "POST":
+        global jobs
+        client = MongoClient(port=27017)
+        db = client.ImplicitFeedback
+        db1 = client.Jobs
+        titleName = [key for key in request.POST if key.startswith("Titlename")]
+
+        # Getting the username
+        username = request.user.username
+        print("Username is", username)
+
+        # Getting the JobTitle
+        Number = titleName[0].split("+")
+        job_retrieved_to_be_displayed = jobs[int(Number[1]) - 1]
+        print("Job Title is", job_retrieved_to_be_displayed.jobTitle)
+
+
+        # Select * from jobsData where jobtitle = passedParameter
+        # Checking if the Job already exists in DB or not
+        jobsData =db1.jobsData.find({"JobTitle":job_retrieved_to_be_displayed.jobTitle},{"userassignedId":1,
+                                                                                         "JobCompany":1,
+                                                                                         "JobLocation":1,
+                                                                                         "JobSalary":1,
+                                                                                         "JobSummary":1})
+
+        if jobsData.count() == 0:
+            Job = {
+                'userassignedId': job_retrieved_to_be_displayed.id,
+                'JobTitle': job_retrieved_to_be_displayed.jobTitle,
+                'JobCompany': job_retrieved_to_be_displayed.jobCompany,
+                'JobLocation': job_retrieved_to_be_displayed.jobLocation,
+                'JobSalary': job_retrieved_to_be_displayed.jobSalary,
+                'JobSummary': job_retrieved_to_be_displayed.jobSummary,
+            }
+            result = db1.jobsDetail.insert_one(Job)
+
+
+
+        feed_back_of_user = db.reviews.find({"Username": username},{"Username":1,"Jobtitle":1,"ImplicitRating":1})
+        if feed_back_of_user.count() == 0:
+            print("Nothing initially in the DB")
+            implicit_feedback_count = 1
+            Feedback = {
+                'Username': username,
+                'JobTitle': job_retrieved_to_be_displayed.jobTitle,
+                'ImplicitRating': implicit_feedback_count
+            }
+            result = db.reviews.insert_one(Feedback)
+        else:
+            print("Username Records already present in the db")
+
+
+
+
+        return render(request, 'jobsDetail.html',{"jobsDetail": job_retrieved_to_be_displayed})
 
 
 def jobsretrieving(request):
@@ -67,7 +138,7 @@ def jobsretrieving(request):
         soup = BeautifulSoup(data, 'lxml')
         soup = soup.findAll("a", {"class": "turnstileLink"})
         j = 1
-        jobs = []
+        global jobs
         id = 0
 
         title = ""
