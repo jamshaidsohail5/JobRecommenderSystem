@@ -202,7 +202,8 @@
 </nav>
 
 
-<form id="signupForm" method="post" class="form-horizontal" style="margin-top: 30px">
+<form id="JobsDetailForm" action="{% url 'jobs:saveExplicitRating' %}" method="post" class="form-horizontal" style="margin-top: 30px">
+    {% csrf_token %}
     <div class="form-group">
         <label class="col-xs-3 control-label">Job ID</label>
         <div class="col-xs-4">
@@ -250,7 +251,7 @@
 
 
     <div class="stars" style="float: left; margin: 0px; padding: 0px; margin-left: 270px">
-        <form action="">
+     <!--   <form id = "ratingsForm" action=""> -->
             <input class="star star-5" id="star-5{{ jobsDetail.id }}" type="radio" name="star"/>
             <label class="star star-5" for="star-5{{ jobsDetail.id }}"></label>
 
@@ -265,13 +266,13 @@
 
             <input class="star star-1" id="star-1{{ jobsDetail.id }}" type="radio" name="star"/>
             <label class="star star-1" for="star-1{{ jobsDetail.id }}"></label>
-        </form>
+    <!--    </form> -->
     </div>
 
 
     <div class="form-group">
         <div class="col-xs-9 col-xs-offset-3">
-            <button type="submit" class="btn btn-primary" name="Apply" value="Apply">Apply</button>
+            <button type="submit" class="btn btn-primary" name="Apply" value="Apply">Submit Rating</button>
         </div>
     </div>
 </form>

@@ -42,17 +42,14 @@ def displayingJobDetail(request):
 
         # Getting the username
         username = request.user.username
-        print("Username is", username)
 
         # Getting the JobTitle
         Number = titleName[0].split("+")
-        print("Jobid id ", Number[1])
+        print("Job id is ", Number)
         if int(Number[1]) != 0:
             job_retrieved_to_be_displayed = jobs[int(Number[1]) - 1]
         else:
             job_retrieved_to_be_displayed = jobs[int(Number[1])]
-
-        print("Job Title is", job_retrieved_to_be_displayed.jobTitle)
 
         # Select * from jobsData where jobtitle = passedParameter
         # Checking if the Job already exists in DB or not
@@ -91,6 +88,7 @@ def displayingJobDetail(request):
             result = db.reviews.insert_one(Feedback)
         else:
             flag = False
+
             for doc in feed_back_of_user:
                 if doc['JobTitle'] == job_retrieved_to_be_displayed.jobTitle:
                     flag = True
@@ -104,14 +102,14 @@ def displayingJobDetail(request):
                         }
                     )
 
-                if flag == False:
-                    # This means the User didnt gave any rating to the same job before
-                    Feedback = {
-                        'Username': username,
-                        'JobTitle': job_retrieved_to_be_displayed.jobTitle,
-                        'ImplicitRating': 1
-                    }
-                    result = db.reviews.insert_one(Feedback)
+            if flag == False:
+                # This means the User didnt gave any rating to the same job before
+                Feedback = {
+                    'Username': username,
+                    'JobTitle': job_retrieved_to_be_displayed.jobTitle,
+                    'ImplicitRating': 1
+                }
+                result = db.reviews.insert_one(Feedback)
 
         return render(request, 'jobsDetail.html', {"jobsDetail": job_retrieved_to_be_displayed})
 
@@ -177,6 +175,16 @@ def jobsretrieving(request):
         return render(request, 'jobs.html')
 
 
+def saveExplicitRating(request):
+    if request.method == "POST":
+        client = MongoClient(port=27017)
+        db = client.ExplicitFeedback
+
+
+
+
+
+    return render(request,'jobs.html')
 
 
 

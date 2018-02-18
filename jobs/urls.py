@@ -6,5 +6,6 @@ app_name = 'jobs'
 urlpatterns = [
     url(r'^$', views.jobsviewing, name="jobs"),
     url(r'^actualjobs/',views.jobsretrieving,name="jobsretrieve"),
-    url(r'^jobsDetails/',views.displayingJobDetail,name = "jobsdisplay")
+    url(r'^jobsDetails/',views.displayingJobDetail,name = "jobsdisplay"),
+    url(r'^savedJobsRatings',views.saveExplicitRating,name = "saveExplicitRating")
 ]
