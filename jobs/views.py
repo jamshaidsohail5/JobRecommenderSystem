@@ -159,7 +159,7 @@ def jobsretrieving(request):
 
                 jobSummary = jobSoup.find("span", {"class": "summary"})
                 if jobSummary:
-                    summary = jobSummary.text.encode('utf-8')
+                    summary = jobSummary.text
                     # db.Jobs.update(
                     #     {"ID": j},
                     #     {"$set": {"Summary": jobSummary.text}}
