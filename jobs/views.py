@@ -141,7 +141,6 @@ def jobsretrieving(request):
         start = 0
 
         while start is not 20:
-
             r = requests.get("https://www.indeed.com/jobs?q=" + request.POST['keyword'] + "&l=" + request.POST[
                 'location'] + "&start=" + str(start),
                              proxies={"http": "http://61.233.25.166:80"})
@@ -195,7 +194,7 @@ def jobsretrieving(request):
 
                     jobApplyLink = jobSoup.find("a", {"class": "view_job_link view-apply-button blue-button"})
                     jobApplyLink = jobApplyLink.get("href")
-                    if jobApplyLink:
+                    #if jobApplyLink:
                     # db.Jobs.update(
                     #     {"ID": j},
                     #     {"$set": {"ApplyLink": "https://www.indeed.com" + jobApplyLink}}
