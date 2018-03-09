@@ -202,34 +202,38 @@
 </nav>
 
 
-<form id="JobsDetailForm" action="{% url 'jobs:saveExplicitRating' %}" method="post" class="form-horizontal" style="margin-top: 30px">
+<form id="JobsDetailForm" action="{% url 'jobs:saveExplicitRating' %}" method="post" class="form-horizontal"
+      style="margin-top: 30px">
     {% csrf_token %}
     <div class="form-group">
         <label class="col-xs-3 control-label">Job ID</label>
         <div class="col-xs-4">
-            <input type="text" class="form-control" name="Jobid" placeholder="JobID" value="{{ jobsDetail.id }}" readonly/>
+            <input type="text" class="form-control" name="Jobid" placeholder="JobID" value="{{ jobsDetail.id }}"
+                   readonly/>
         </div>
     </div>
 
     <div class="form-group">
         <label class="col-xs-3 control-label">Title</label>
         <div class="col-xs-4">
-            <input type="text" class="form-control" name="Jobtitle" placeholder="Jobtitle" value="{{ jobsDetail.jobTitle }}" readonly/>
+            <input type="text" class="form-control" name="Jobtitle" placeholder="Jobtitle"
+                   value="{{ jobsDetail.jobTitle }}" readonly/>
         </div>
     </div>
     <div class="form-group">
         <label class="col-xs-3 control-label">Company</label>
         <div class="col-xs-4">
-            <input type="text" class="form-control" name="Jobcompany" placeholder="JobCompany" value="{{ jobsDetail.jobCompany }}" readonly/>
+            <input type="text" class="form-control" name="Jobcompany" placeholder="JobCompany"
+                   value="{{ jobsDetail.jobCompany }}" readonly/>
         </div>
     </div>
-
 
 
     <div class="form-group">
         <label class="col-xs-3 control-label">Location</label>
         <div class="col-xs-5">
-            <input type="text" class="form-control" name="jobLocation" placeholder="jobLocation" value="{{ jobsDetail.jobLocation }}" readonly/>
+            <input type="text" class="form-control" name="jobLocation" placeholder="jobLocation"
+                   value="{{ jobsDetail.jobLocation }}" readonly/>
         </div>
     </div>
 
@@ -237,7 +241,8 @@
     <div class="form-group">
         <label class="col-xs-3 control-label">Salary</label>
         <div class="col-xs-5">
-            <input type="text" class="form-control" name="jobSalary" placeholder="jobSalary" value="{{ jobsDetail.jobSalary }}" readonly/>
+            <input type="text" class="form-control" name="jobSalary" placeholder="jobSalary"
+                   value="{{ jobsDetail.jobSalary }}" readonly/>
         </div>
     </div>
 
@@ -245,28 +250,62 @@
     <div class="form-group">
         <label class="col-xs-3 control-label">Description</label>
         <div class="col-xs-8">
-            <textarea class="form-control" name="jobSummary" rows="5" style="width: 100%" readonly> {{ jobsDetail.jobSummary }}</textarea>
+            <textarea class="form-control" name="jobSummary" rows="5" style="width: 100%"
+                      readonly> {{ jobsDetail.jobSummary }}</textarea>
         </div>
     </div>
 
 
     <div class="stars" style="float: left; margin: 0px; padding: 0px; margin-left: 270px">
-     <!--   <form id = "ratingsForm" action=""> -->
-            <input class="star star-5" id="star-5{{ jobsDetail.id }}" type="radio" name="star"/>
-            <label class="star star-5" for="star-5{{ jobsDetail.id }}"></label>
 
-            <input class="star star-4" id="star-4{{ jobsDetail.id }}" type="radio" name="star"/>
-            <label class="star star-4" for="star-4{{ jobsDetail.id }}"></label>
 
-            <input class="star star-3" id="star-3{{ jobsDetail.id }}" type="radio" name="star"/>
-            <label class="star star-3" for="star-3{{ jobsDetail.id }}"></label>
+        <form id="ratingstar5" method="post" action="{% url 'jobs:saveExplicitRating' %}">
+            {% csrf_token %}
+            <input class="star star-5" id="star-5" type="radio" name="star+5+{{ jobsDetail.id }}"
+                   onclick="document.getElementById('ratingstar5').submit()"/>
+            <label class="star star-5" for="star-5"></label>
+        </form>
 
-            <input class="star star-2" id="star-2{{ jobsDetail.id }}" type="radio" name="star"/>
-            <label class="star star-2" for="star-2{{ jobsDetail.id }}"></label>
 
-            <input clpythass="star star-1" id="star-1{{ jobsDetail.id }}" type="radio" name="star"/>
-            <label class="star star-1" for="star-1{{ jobsDetail.id }}"></label>
-    <!--    </form> -->
+        <form id="ratingstar4" method="post" action="{% url 'jobs:saveExplicitRating' %}">
+            {% csrf_token %}
+
+            <input class="star star-4" id="star-4" type="radio" name="star+4+{{ jobsDetail.id }}"
+                   onclick="document.getElementById('ratingstar4').submit()"/>
+            <label class="star star-4" for="star-4"></label>
+
+        </form>
+
+
+        <form id="ratingstar3" method="post" action="{% url 'jobs:saveExplicitRating' %}">
+            {% csrf_token %}
+
+            <input class="star star-3" id="star-3" type="radio" name="star+3+{{ jobsDetail.id }}"
+                   onclick="document.getElementById('ratingstar3').submit()"/>
+            <label class="star star-3" for="star-3"></label>
+
+        </form>
+
+
+        <form id="ratingstar2" method="post" action="{% url 'jobs:saveExplicitRating' %}">
+            {% csrf_token %}
+
+            <input class="star star-2" id="star-2" type="radio" name="star+2+{{ jobsDetail.id }}"
+                   onclick="document.getElementById('ratingstar2').submit()"/>
+            <label class="star star-2" for="star-2"></label>\
+
+        </form>
+
+        <form id="ratingstar1" method="post" action="{% url 'jobs:saveExplicitRating' %}">
+            {% csrf_token %}
+
+
+            <input class="star star-1" id="star-1" type="radio" name="star+1+{{ jobsDetail.id }}"
+                   onclick="document.getElementById('ratingstar1').submit()"/>
+            <label class="star star-1" for="star-1"></label>
+
+        </form>
+
     </div>
 
 

@@ -9,7 +9,6 @@ from accounts.models import signupModel, workexperienceModel, Education
 import json as json1
 
 
-
 # from accounts.models import signupModel
 def signup(request):
     if request.method == "POST":
@@ -21,6 +20,9 @@ def signup(request):
             user1 = User.objects.create_user(request.POST['username'], password=request.POST['password'])
 
             # Creating the user Signup Model
+
+
+
             signUpModel = signupModel.objects.create(user=user1, name=request.POST['name'],
                                                      dateofbirth=request.POST['dob'],
                                                      gender=request.POST.get('gender', None),
