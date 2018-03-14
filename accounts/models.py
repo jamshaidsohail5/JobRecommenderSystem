@@ -16,6 +16,7 @@ class signupModel(models.Model):
     skills = models.TextField(null=True)
     interests = models.TextField(null=True)
     objectivestatement = models.CharField(max_length=100)
+    idformongo = models.TextField(null=True)
 
 
 class workexperienceModel(models.Model):

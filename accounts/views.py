@@ -1,12 +1,13 @@
-from django.db import transaction
-from django.shortcuts import render, redirect, render_to_response
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.template import RequestContext
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
 from pandas._libs import json
+from bs4 import BeautifulSoup
+from pymongo import MongoClient
+import requests
+
 from accounts import models
 from accounts.models import signupModel, workexperienceModel, Education
-import json as json1
 
 
 # from accounts.models import signupModel
@@ -17,9 +18,128 @@ def signup(request):
             return render(request, 'Signupform.html', {'error': 'Email has already been taken!Try Another Mail'})
         except User.DoesNotExist:
 
+            # Here the stuff will also be saved in the MongoDB in order to generate the Recommendation
+            # for the User which has just signed in
+
+            client = MongoClient('localhost:27017')
+            db = client.ResumeDatabase
+
+            # Inserting the ID of the Relevant User
+            no_of_documents = db.Person.count();
+            ID = no_of_documents + 1
+
+            db.Person.insert_one(
+                {
+                    "ID": ID,
+                })
+
+            # Making Profile Data Variable for TF-IDF Comparison
+            # Initially profileData String is populated with Position Applied
+            profileData = "not mentioned"
+
+            db.Person.update(
+                {"ID": ID},
+                {"$set": {"Position Applied": "not mentioned"}}
+            )
+
+            # Populating the Profile Data with the Userlocation which is the concatenation of
+            # of the city and the country
+            profileData += " " + request.POST['City'] + request.POST['Country']
+
+            db.Person.update(
+                {"ID": ID},
+                {"$set": {"User Location": request.POST['City'] + request.POST['Country']}}
+            )
+
+            # Populating the profileData with the objective the user has entered in the box
+            profileData += " " + request.POST['textarea']
+
+            db.Person.update(
+                {"ID": ID},
+                {"$set": {"Objective": request.POST['textarea']}}
+            )
+
+
+
+
+            listofcompanies1 = request.POST.getlist('Company[]')
+            listofpositions1 = request.POST.getlist('Position[]')
+            listofstartdates1 = request.POST.getlist('startdates[]')
+            listofenddates1 = request.POST.getlist('enddates[]')
+            listofDescription1 = request.POST.getlist('Descriptions[]')
+
+            for i in range(0, len(listofcompanies1)):
+                profileData += " " + listofcompanies1[i]
+                profileData += " " + listofpositions1[i]
+                profileData += " " + listofDescription1[i]
+
+                db.Person.update(
+                    {"ID": ID},
+                    {"$push": {"Work Experience": {
+                        "ExperienceID": i,
+                        "Company": listofcompanies1[i],
+                        "Title": listofpositions1[i],
+                        "Dates": listofstartdates1[i] + ' to ' + listofenddates1[i],
+                        "Description": listofDescription1[i]
+                    }}}
+                )
+
+            listofdegrees1 = request.POST.getlist('degreenames[]')
+            listofinstitution1 = request.POST.getlist('institution[]')
+            listofstartdates2 = request.POST.getlist('startdates1[]')
+            listofenddates2 = request.POST.getlist('enddates1[]')
+
+            for i in range(0, len(listofdegrees1)):
+                profileData += " " + listofinstitution1[i]
+                profileData += " " + listofdegrees1[i]
+
+                db.Person.update(
+                    {"ID": ID},
+                    {"$push": {"Education": {
+                        "EducationID": i,
+                        "School": listofinstitution1[i],
+                        "Title": listofdegrees1[i],
+                        "Dates": listofstartdates2[i] + ' to ' + listofenddates2[i],
+                    }}}
+                )
+
+            skills_coming = request.POST.getlist('skills[]')
+            interests_coming = request.POST.getlist('interests[]')
+
+            for i in range(0, len(skills_coming)):
+                profileData += " " + skills_coming[i]
+                db.Person.update(
+                    {"ID": ID},
+                    {"$push": {"Skills": {
+                        "Skill": skills_coming[i],
+                    }}}
+                )
+
+            temp1 = ""
+            for i in range(0, len(interests_coming)):
+                if i == len(interests_coming) - 1:
+                    temp1 = temp1 + interests_coming[i]
+                else:
+                    temp1 = temp1 + interests_coming[i] + ','
+
+
+
+
+            profileData += " " + temp1
+            db.Person.update(
+                {"ID": ID},
+                {"$set": {"Additional Information": temp1}}
+            )
+
+            db.Person.update(
+                {"ID": ID},
+                {"$set": {"Profile Data": profileData}}
+            )
+
+
             user1 = User.objects.create_user(request.POST['username'], password=request.POST['password'])
 
-            # Creating the user Signup Model
+            #Creating the user Signup Model
 
 
 
@@ -31,11 +151,12 @@ def signup(request):
                                                      skills=json.dumps(request.POST.getlist('skills[]')),
                                                      interests=request.POST.getlist('interests[]'),
                                                      objectivestatement=request.POST['textarea'],
-                                                     country=request.POST['Country'], city=request.POST['City'])
+                                                     country=request.POST['Country'], city=request.POST['City'],
+                                                     idformongo=ID)
 
             signUpModel.save()
-
-            # Getting the list from the input tags
+            #
+            # # Getting the list from the input tags
             listofcompanies = request.POST.getlist('Company[]')
             listofpositions = request.POST.getlist('Position[]')
             listofstartdates = request.POST.getlist('startdates[]')
@@ -45,7 +166,7 @@ def signup(request):
             listofinstitution = request.POST.getlist('institution[]')
             listofstartdate1 = request.POST.getlist('startdates1[]')
             listofenddate1 = request.POST.getlist('enddates1[]')
-
+            #
             ArrayContainingExperiencesObject = []
             # Creating objects for the users
             for i in range(0, len(listofcompanies)):
@@ -72,7 +193,7 @@ def signup(request):
 
                 # Setting the session
             login(request, user1)
-            # UserRecord = models.signupModel.objects.filter(email=request.POST['username'])
+            UserRecord = models.signupModel.objects.filter(email=request.POST['username'])
             return render(request, 'jobs.html')
             # return render(request, 'MainPage.html', {'UserRecord': UserRecord})
     else:
@@ -87,6 +208,7 @@ def loginview(request):
             username = None
             if request.user.is_authenticated():
                 return render(request, 'jobs.html')
+
         else:
             return render(request, 'Signinform.html', {'error': 'The user name and password didn\'t match.'})
     else:
@@ -108,18 +230,13 @@ def mainpageview(request):
     flag1 = False
 
     if request.user.is_authenticated():
-        print("aya 2")
         username = request.user.username
-        print("aya 3")
 
         UserRecord = models.signupModel.objects.filter(email=username)
-        print("aya 4")
 
         UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
-        print("aya 5")
 
         UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
-        print("agy 6")
 
         skills = UserRecord[0].skills.replace('"', '').replace('[', '').replace(']', '').split(",")
         interests1 = UserRecord[0].interests.replace("'", "").replace(" ", "").replace("[", "").replace("]", "").split(

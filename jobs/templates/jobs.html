@@ -370,6 +370,9 @@
 {#</body>#}
 {#</html>#}
 
+
+{% load staticfiles %}
+
 <html>
 <head>
 
@@ -506,59 +509,166 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom fonts for this template-->
+
+
+    <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+          type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/clean-blog.min.css' %}" rel="stylesheet">
+
+
 </head>
 
 
-<nav class="navbar navbar-inverse" style="margin: 0px">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">WebSiteName</a>
+{#<nav class="navbar navbar-inverse" style="margin: 0px">#}
+{#    <div class="container-fluid">#}
+{#        <div class="navbar-header">#}
+{#            <a class="navbar-brand" href="#">WebSiteName</a>#}
+{#        </div>#}
+{#        <ul class="nav navbar-nav">#}
+{#            <li class="active"><a href="{% url 'jobs:jobs' %}">MainPage</a></li>#}
+{#        </ul>#}
+{##}
+{##}
+{#        <ul class="nav navbar-nav navbar-right">#}
+{#            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Settings <span#}
+{#                    class="caret"></span></a>#}
+{#                <ul class="dropdown-menu">#}
+{##}
+{#                    <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>#}
+{#                    <form id="logout" method="post" action="{% url 'accounts:logout' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden"/>#}
+{#                    </form>#}
+{##}
+{##}
+{#                    <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>#}
+{#                    <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden"/>#}
+{#                    </form>#}
+{##}
+{##}
+{#                    <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a></li>#}
+{#                    <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden"/>#}
+{#                    </form>#}
+{##}
+{##}
+{#                    <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a></li>#}
+{#                    <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <input type="hidden"/>#}
+{#                    </form>#}
+{##}
+{#                </ul>#}
+{#            </li>#}
+{##}
+{##}
+{#        </ul>#}
+{#    </div>#}
+{#</nav>#}
+{##}
+
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+
+
+            <ul class="navbar-nav ml-auto">
+
+
+                {% if user.is_authenticated %}
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle navbar-brand" data-toggle="dropdown" href=""
+                           style="text-decoration: none;color: #ffffff;font-size: large">Settings
+
+
+                        </a>
+
+                        <ul class="dropdown-menu">
+
+                            <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>
+                            <form id="logout" method="post" action="{% url 'accounts:logout' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
+                            <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a>
+                            </li>
+                            <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+
+                            <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a>
+                            </li>
+                            <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">
+                                {% csrf_token %}
+                                <input type="hidden"/>
+                            </form>
+
+                        </ul>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:signup' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Sign In</a>
+                    </li>
+                {% endif %}
+
+            </ul>
+
+
         </div>
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="{% url 'jobs:jobs' %}">MainPage</a></li>
-        </ul>
-
-
-        <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Settings <span
-                    class="caret"></span></a>
-                <ul class="dropdown-menu">
-
-                    <li><a href="#" onClick="document.getElementById('logout').submit()">Logout</a></li>
-                    <form id="logout" method="post" action="{% url 'accounts:logout' %}">
-                        {% csrf_token %}
-                        <input type="hidden"/>
-                    </form>
-
-
-                    <li><a href="#" onClick="document.getElementById('showjobs').submit()">ShowJobs</a></li>
-                    <form id="showjobs" method="post" action="{% url 'jobs:jobs' %}">
-                        {% csrf_token %}
-                        <input type="hidden"/>
-                    </form>
-
-
-                    <li><a href="#" onClick="document.getElementById('showprofile').submit()">ShowProfile</a></li>
-                    <form id="showprofile" method="post" action="{% url 'accounts:mainpage' %}">
-                        {% csrf_token %}
-                        <input type="hidden"/>
-                    </form>
-
-
-                    <li><a href="#" onClick="document.getElementById('editprofile').submit()">EditProfile</a></li>
-                    <form id="editprofile" method="post" action="{% url 'accounts:editprofile' %}">
-                        {% csrf_token %}
-                        <input type="hidden"/>
-                    </form>
-
-                </ul>
-            </li>
-
-
-        </ul>
     </div>
 </nav>
 
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/static/img/home.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Jobs For you</h1>
+                    <span class="subheading">Here the jobs for you</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 
 <body>
 <h1 align="center">Job Postings</h1>
@@ -569,18 +679,28 @@
 {% endif %}
 
 
-<form class="form-inline" style="text-align: center" action="{% url 'jobs:jobsretrieve' %}" method="post">
+<form style="margin-left: 43%" action="{% url 'jobs:recommendjobs'%}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">RecommendJobs</button>
+</form>
+
+<form class="form-inline" style="margin-left: 37%" action="{% url 'jobs:jobsretrieve' %}" method="post">
+
+
     {% csrf_token %}
 
-    <div class="form-group">
-        <input type="text" class="form-control" name="keyword" placeholder="Keywords: Django, Web" required>
-    </div>
 
     <div class="form-group">
-        <input type="text" class="form-control" name="location" placeholder="Location: City, State" required>
+        <input type="text" class="form-control" name="keyword" style="font-size: 12px"
+               placeholder="Keywords: Django, Web" required>
     </div>
 
-    <button type="submit" class="btn btn-default">Search</button>
+    <div class="form-group" style="margin-left: 10px">
+        <input type="text" class="form-control" name="location" style="font-size: 12px"
+               placeholder="Location: City, State" required>
+    </div>
+
+    <button type="submit" class="btn btn-danger" style="margin-left: 10px">Search</button>
 
 </form>
 
@@ -588,52 +708,107 @@
 <div style="margin-top: 40px">
     {% for job in jobList %}
         <div class="center">
-        <form id="jobData+{{ job.id }}" method="post" action="{% url 'jobs:displayDescription' %}">
-            {% csrf_token %}
-            <input name="jobId+{{ job.id }}" type="hidden"/>
-            <div style="float: left">
-                <p style="margin-bottom: 0px;"><span class="title_name"><strong>{{ job.title }}</strong></span></p>
-                {% if job.company %}
-                    <span class="smallGrayFont">{{ job.company }}- </span>
+
+            <form id="jobData+{{ job.id }}" method="post" action="{% url 'jobs:jobsdisplay' %}">
+
+
+                {% csrf_token %}
+
+
+                <input name="jobId+{{ job.id }}" type="hidden"/>
+
+
+                <div style="float: left">
+
+                    <p style="margin-bottom: 0px;"><span class="title_name"><strong>{{ job.jobTitle }}</strong></span>
+                    </p>
+
+
+
+                    {% if job.jobCompany %}
+                        <span class="smallGrayFont">{{ job.jobCompany }}- </span>
+                    {% endif %}
+
+
+                    {% if job.jobLocation %}
+                        <span name="jobLocation" class="smallGrayFont" value="{{ job.jobLocation }}"></span>
+                    {% endif %}
+
+
+                </div>
+
+
+                <div class="stars" style="float: right; margin: 0px; padding: 0px">
+                    <form action="">
+                        <input class="star star-5" id="star-5{{ job.id }}" type="radio" name="star"/>
+                        <label class="star star-5" for="star-5{{ job.id }}"></label>
+
+                        <input class="star star-4" id="star-4{{ job.id }}" type="radio" name="star"/>
+                        <label class="star star-4" for="star-4{{ job.id }}"></label>
+
+                        <input class="star star-3" id="star-3{{ job.id }}" type="radio" name="star"/>
+                        <label class="star star-3" for="star-3{{ job.id }}"></label>
+
+                        <input class="star star-2" id="star-2{{ job.id }}" type="radio" name="star"/>
+                        <label class="star star-2" for="star-2{{ job.id }}"></label>
+
+                        <input class="star star-1" id="star-1{{ job.id }}" type="radio" name="star"/>
+                        <label class="star star-1" for="star-1{{ job.id }}"></label>
+                    </form>
+                </div>
+
+
+                <div class="description" style="margin-bottom: 10px; clear: both">
+
+                    <!--
+                    {% for token in job.jobSummary %}
+                        {{ token }}
+                    {% endfor %}
+                    -->
+
+
+                    <a href="" onClick="document.getElementById('jobData+{{ job.id }}').submit();return false;">
+                        Read More..</a>
+
+
+                </div>
+
+
+
+
+                {% if job.jobSalary %}
+                    <span class="smallGrayFont" style="float: right; margin-right: 2px">{{ job.jobSalary }}</span>
                 {% endif %}
-                <span name="jobLocation" class="smallGrayFont" value="{{ job.locations }}"></span>
-            </div>
-            <div class="stars" style="float: right; margin: 0px; padding: 0px">
-                <form action="">
-                    <input class="star star-5" id="star-5{{ job.id }}" type="radio" name="star"/>
-                    <label class="star star-5" for="star-5{{ job.id }}"></label>
 
-                    <input class="star star-4" id="star-4{{ job.id }}" type="radio" name="star"/>
-                    <label class="star star-4" for="star-4{{ job.id }}"></label>
 
-                    <input class="star star-3" id="star-3{{ job.id }}" type="radio" name="star"/>
-                    <label class="star star-3" for="star-3{{ job.id }}"></label>
+                <br>
 
-                    <input class="star star-2" id="star-2{{ job.id }}" type="radio" name="star"/>
-                    <label class="star star-2" for="star-2{{ job.id }}"></label>
 
-                    <input class="star star-1" id="star-1{{ job.id }}" type="radio" name="star"/>
-                    <label class="star star-1" for="star-1{{ job.id }}"></label>
-                </form>
-            </div>
-            <div class="description" style="margin-bottom: 10px; clear: both">
-                {% for token in job.description %}
-                    {{ token }}
-                {% endfor %}
-                <a href="" onClick="document.getElementById('jobData+{{ job.id }}').submit()", target="_blank"> Read More..</a>
-            </div>
-            <span class="smallGrayFont">Posted {{ job.date }} ago</span>
-            {% if job.salary %}
-                <span class="smallGrayFont" style="float: right; margin-right: 2px">Rs {{ job.salary }}</span>
-            {% endif %}
-            <br>
-            <a><span class="greenLink" style=" color: #099e2d;">{{ job.site }}</span></a>
-            <span style="color: #666; line-height: 16px"> - {{ job.dayMonth }} - </span>
-            <span class="favLink"> Add to Favorites </span>
-            <hr class="style-four"/>
-        </form>
+                <!--
+                 <a href="{{ job.jobLink }}"><span class="greenLink" style=" color: #099e2d;" >{{ job.jobLink }}</span></a>
+                <span style="color: #666; line-height: 16px"> - {{ job.dayMonth }} - </span>
+                <span class="favLink"> Add to Favorites </span>
+                -->
+
+                <hr class="style-four"/>
+            </form>
         </div>
     {% endfor %}
 </div>
+
+
+<!--
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+-->
+
+
+<script src="{% static 'js/clean-blog.min.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+
+
 </body>
 </html>

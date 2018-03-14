@@ -11,5 +11,4 @@ urlpatterns = [
     url(r'^editprofile/', views.editprofile, name="editprofile"),
     url(r'^storeinfo/',views.updateinformation,name = "updateinfo"),
     url(r'^jobs/',views.sendtohome,name = "sendingtohome"),
-
 ]

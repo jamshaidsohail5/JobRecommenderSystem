@@ -6,25 +6,38 @@
     <meta charset="UTF-8">
     <title>SignIn form</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
-    <!-- Bootstrap core CSS -->
-    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Bootstrap core CSS-->
 
-    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
 
     <link href="{% static 'vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+
+
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet'
+
           type='text/css'>
+
+
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
           rel='stylesheet' type='text/css'>
 
-    <!-- Custom styles for this template -->
+
+
+
     <link href="{% static 'css/clean-blog.min.css' %}" rel="stylesheet">
+
+    <style>
+        input { font-size: 50px; }
+        textarea { font-size: 18px; }
+    </style>
 
 
 </head>
@@ -107,13 +120,13 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" class="form-control" id="username1" placeholder="Enter email" name="username1">
+            <input type="email" class="form-control" id="username1"  style="font-size: 12px" placeholder="Enter email" name="username1">
         </div>
 
 
         <div class="form-group">
             <label for="pwd">Password:</label>
-            <input type="password" class="form-control" id="password1" placeholder="Enter password" name="password1">
+            <input type="password" class="form-control" id="password1"  style="font-size: 12px" placeholder="Enter password" name="password1">
         </div>
 
 
@@ -124,14 +137,17 @@
 </div>
 
 
+<!--
 <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
 
-<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
-<!-- Custom scripts for this template -->
+-->
+
+
 <script src="{% static 'js/clean-blog.min.js' %}"></script>
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
 
 
 </body>
