@@ -20,7 +20,6 @@ from scipy import spatial
 from operator import attrgetter
 from pyspark.mllib.linalg.distributed import IndexedRow, IndexedRowMatrix
 
-
 jobs = []
 
 
@@ -46,13 +45,12 @@ def displayingJobDetail(request):
     if request.method == "POST":
         global jobs
         client = MongoClient(port=27017)
+
         db = client.ImplicitFeedback
         db1 = client.Jobs
 
         # Here i will first get the Job id from the Hidden Text Box
         JobID = [key for key in request.POST if key.startswith("jobId")]
-
-        print(JobID)
 
         # Getting the username
         username = request.user.username
@@ -68,14 +66,13 @@ def displayingJobDetail(request):
         # Checking if the Job already exists in DB or not
         # If the job do not exist in Db then saving it in the DB
 
-        jobsData = db1.jobsData.find({"JobTitle": job_retrieved_to_be_displayed.jobTitle}, {"userassignedId": 1,
-                                                                                            "JobCompany": 1,
-                                                                                            "JobLocation": 1,
-                                                                                            "JobSalary": 1,
-                                                                                            "JobSummary": 1})
+        jobsData = db1.jobsDetail.find({"JobTitle": job_retrieved_to_be_displayed.jobTitle}, {"userassignedId": 1,
+                                                                                              "JobCompany": 1,
+                                                                                              "JobLocation": 1,
+                                                                                              "JobSalary": 1,
+                                                                                              "JobSummary": 1})
 
         if jobsData.count() == 0:
-            print("It came inside")
             Job = {
                 'userassignedId': job_retrieved_to_be_displayed.id,
                 'JobTitle': job_retrieved_to_be_displayed.jobTitle,
@@ -217,70 +214,6 @@ def jobsretrieving(request):
         return render(request, 'jobs.html')
 
 
-        # if (request.method == "POST"):
-        #     salary = ""
-        #     summary = ""
-        #
-        #     keyword = request.POST['keyword']
-        #     location = request.POST['location']
-        #
-        #     print('4')
-        #
-        #     r = requests.get("https://www.indeed.com/jobs?q=" + keyword + "&l=" + location,
-        #                      proxies={"http": "http://35.196.26.166:3128"})
-        #     data = r.text
-        #     soup = BeautifulSoup(data, 'lxml')
-        #     soup = soup.findAll("a", {"class": "turnstileLink"})
-        #     j = 1
-        #     global jobs
-        #     for link in soup:
-        #         jobLink = link.get("href")
-        #         if "clk" in jobLink:
-        #
-        #             id = j
-        #
-        #             jobRequest = requests.get("https://www.indeed.com" + jobLink,
-        #                                       proxies={"http": "http://35.196.26.166:3128"})
-        #             jobData = jobRequest.text
-        #             jobSoup = BeautifulSoup(jobData, 'lxml')
-        #
-        #             jobTitle = jobSoup.find("b", {"class": "jobtitle"})
-        #
-        #             title = jobTitle.text
-        #             company = ""
-        #             jobCompany = jobSoup.find("span", {"class": "company"})
-        #             if jobCompany:
-        #                 company = jobCompany.text
-        #
-        #             jobLocation = jobSoup.find("span", {"class": "location"})
-        #
-        #             if jobLocation:
-        #                 location = jobLocation.text
-        #
-        #             jobSalary = jobSoup.find("span", {"class": "no-wrap"})
-        #
-        #             if jobSalary:
-        #                 salary = jobSalary.text.lstrip()
-        #
-        #             jobSummary = jobSoup.find("span", {"class": "summary"})
-        #
-        #             if jobSummary:
-        #                 summary = jobSummary.text
-        #                 # db.Jobs.update(
-        #                 #     {"ID": j},
-        #                 #     {"$set": {"Summary": jobSummary.text}}
-        #                 # )
-        #             j += 1
-        #             jobs.append(Jobs(id, title, company, location, salary, summary))
-        #
-        #         if j == 4:
-        #             break
-        #
-        #     return render(request, 'jobs.html', {"jobList": jobs})
-        # else:
-        #     return render(request, 'jobs.html')
-
-
 def saveExplicitRating(request):
     if request.method == "POST":
         global jobs
@@ -291,31 +224,28 @@ def saveExplicitRating(request):
         # Getting the username
         username = request.user.username
 
-        print(actual_star_number_and_job_number)
-
         # Getting the JobTitle
         Number = actual_star_number_and_job_number[0].split("+")
         print("Star Rating is", Number[1])
         print("Job id is ", Number[2])
-        if int(Number[2]) != 0:
-            job_retrieved_to_be_displayed = jobs[int(Number[2]) - 1]
-        else:
-            job_retrieved_to_be_displayed = jobs[int(Number[2])]
 
-        feed_back_of_user = db.reviews.find({"Username": username}, {"Username": 1, "JobTitle": 1, "ImplicitRating": 1})
+        job_retrieved_to_be_displayed = jobs[int(Number[2]) - 1]
+
+        feed_back_of_user = db.reviews.find({"Username": username}, {"Username": 1, "JobTitle": 1, "ExplicitRating": 1})
 
         if feed_back_of_user.count() == 0:
             print("Nothing initially in the DB")
-            implicit_feedback_count = 1
+            explicit_feedback_count = Number[1]
             Feedback = {
                 'Username': username,
                 'JobTitle': job_retrieved_to_be_displayed.jobTitle,
-                'ImplicitRating': implicit_feedback_count
+                'ExplicitRating': explicit_feedback_count
             }
             result = db.reviews.insert_one(Feedback)
         else:
+            # This means the user exists in the db
+            # Now checking if he has given explicit rating to the same job before
             flag = False
-
             for doc in feed_back_of_user:
                 if doc['JobTitle'] == job_retrieved_to_be_displayed.jobTitle:
                     flag = True
@@ -323,10 +253,8 @@ def saveExplicitRating(request):
                     # So increasing the previous count Would do the job
                     # Incrementing the Job Implicit Rating
                     db.reviews.update(
-                        {'Username': username, 'JobTitle': job_retrieved_to_be_displayed.jobTitle},
-                        {
-                            "$inc": {"ImplicitRating": 1}
-                        }
+                        {"JobTitle": job_retrieved_to_be_displayed.jobTitle, "Username": request.user.username},
+                        {"$set": {"ExplicitRating": Number[1]}}
                     )
 
             if flag == False:
@@ -334,16 +262,14 @@ def saveExplicitRating(request):
                 Feedback = {
                     'Username': username,
                     'JobTitle': job_retrieved_to_be_displayed.jobTitle,
-                    'ImplicitRating': 1
+                    'ExplicitRating': Number[1]
                 }
                 result = db.reviews.insert_one(Feedback)
-
     return render(request, 'jobs.html')
 
 
-
-
 def configureSpark(spark_home=None, pyspark_python=None):
+    # os.environ['JAVA_HOME'] = os.getenv("JAVA_HOME")
     os.environ['HADOOP_HOME'] = "C:/opt/spark-2.2.1-bin-hadoop2.7/Hadoop/"
     spark_home = "C:/opt/spark-2.2.1-bin-hadoop2.7/"
     os.environ['SPARK_HOME'] = spark_home
@@ -358,6 +284,7 @@ def configureSpark(spark_home=None, pyspark_python=None):
     os.environ['PYSPARK_PYTHON'] = pyspark_python
     os.environ["PYSPARK_SUBMIT_ARGS"] = (
         "--packages org.mongodb.spark:mongo-spark-connector_2.11:2.2.0 pyspark-shell")
+
 
 def recommendjobs(request):
     configureSpark()
@@ -419,42 +346,4 @@ def recommendjobs(request):
             break
         i += 1
 
-
-
     return render(request, 'jobs.html')
-
-
-
-
-    # result_json = cj.search({
-    #     'location': location,
-    #     'keywords': keyword,
-    #     'affid': '213e213hd12344552',
-    #     'user_ip': '11.22.33.44',
-    #     'url': 'http://www.example.com/jobsearch?q=python&l=london',
-    #     'user_agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0'
-    # });
-    # print('5')
-    #
-    #
-    # now = datetime.now()
-    # print('6')
-    #
-    # for job in result_json["jobs"]:
-    #     jobPosted = job["date"]
-    #     jobPosted = datetime.strptime(jobPosted, '%a, %d %b %Y %H:%M:%S %Z')
-    #     job["dayMonth"] = str(jobPosted.strftime('%b %d'))
-    #     if abs((now - jobPosted).days) == 1:
-    #         job["date"] = str(abs((now - jobPosted).days)) + " day"
-    #     elif abs((now - jobPosted).days) == 0:
-    #         job["date"] = str(abs((now - jobPosted).seconds) / 3600) + " hours"
-    #     else:
-    #         job["date"] = str(abs((now - jobPosted).days)) + " days"
-    #         print("7")
-    #
-    # print("8")
-    # i = 0;
-    # for job in result_json["jobs"]:
-    #     job["description"] = job["description"].replace('</b>', '').replace('<b>', '').split()
-    #     job["id"] = i
-    #     i = i + 1
