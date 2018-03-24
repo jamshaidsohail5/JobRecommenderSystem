@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from django.shortcuts import render
 from pymongo import MongoClient
+from accounts import models
 
 import sys
 import os
@@ -55,6 +56,9 @@ def displayingJobDetail(request):
         # Getting the username
         username = request.user.username
 
+        # Now retrieving the Django object corresponding to it from the Sqlite3 Database
+        UserRecord = models.signupModel.objects.filter(email=username)
+
         # Getting the JobTitle
         Number = JobID[0].split("+")
         print("Job id is ", Number[1])
@@ -83,28 +87,28 @@ def displayingJobDetail(request):
             }
             result = db1.jobsDetail.insert_one(Job)
 
-        feed_back_of_user = db.reviews.find({"Username": username}, {"Username": 1, "JobTitle": 1, "ImplicitRating": 1})
+        feed_back_of_user = db.reviews.find({"Userid": UserRecord[0].idformongo},
+                                            {"Userid": 1, "Jobid": 1, "ImplicitRating": 1})
 
         if feed_back_of_user.count() == 0:
             print("Nothing initially in the DB")
             implicit_feedback_count = 1
             Feedback = {
-                'Username': username,
-                'JobTitle': job_retrieved_to_be_displayed.jobTitle,
+                'Userid': UserRecord[0].idformongo,
+                'Jobid': job_retrieved_to_be_displayed.id,
                 'ImplicitRating': implicit_feedback_count
             }
             result = db.reviews.insert_one(Feedback)
         else:
             flag = False
-
             for doc in feed_back_of_user:
-                if doc['JobTitle'] == job_retrieved_to_be_displayed.jobTitle:
+                if doc['Jobid'] == job_retrieved_to_be_displayed.id:
                     flag = True
                     # This means that the User has already opened this job and gave implplicit rating
                     # So increasing the previous count Would do the job
                     # Incrementing the Job Implicit Rating
                     db.reviews.update(
-                        {'Username': username, 'JobTitle': job_retrieved_to_be_displayed.jobTitle},
+                        {'Userid': UserRecord[0].idformongo, 'Jobid': job_retrieved_to_be_displayed.id},
                         {
                             "$inc": {"ImplicitRating": 1}
                         }
@@ -113,8 +117,8 @@ def displayingJobDetail(request):
             if flag == False:
                 # This means the User didnt gave any rating to the same job before
                 Feedback = {
-                    'Username': username,
-                    'JobTitle': job_retrieved_to_be_displayed.jobTitle,
+                    'Userid': UserRecord[0].idformongo,
+                    'Jobid': job_retrieved_to_be_displayed.id,
                     'ImplicitRating': 1
                 }
                 result = db.reviews.insert_one(Feedback)
@@ -224,6 +228,9 @@ def saveExplicitRating(request):
         # Getting the username
         username = request.user.username
 
+        # Now retrieving the Django object corresponding to it from the Sqlite3 Database
+        UserRecord = models.signupModel.objects.filter(email=username)
+
         # Getting the JobTitle
         Number = actual_star_number_and_job_number[0].split("+")
         print("Star Rating is", Number[1])
@@ -231,14 +238,15 @@ def saveExplicitRating(request):
 
         job_retrieved_to_be_displayed = jobs[int(Number[2]) - 1]
 
-        feed_back_of_user = db.reviews.find({"Username": username}, {"Username": 1, "JobTitle": 1, "ExplicitRating": 1})
+        feed_back_of_user = db.reviews.find({"Userid": UserRecord[0].idformongo},
+                                            {"Userid": 1, "Jobid": 1, "ExplicitRating": 1})
 
         if feed_back_of_user.count() == 0:
             print("Nothing initially in the DB")
             explicit_feedback_count = Number[1]
             Feedback = {
-                'Username': username,
-                'JobTitle': job_retrieved_to_be_displayed.jobTitle,
+                'Userid': UserRecord[0].idformongo,
+                'Jobid': job_retrieved_to_be_displayed.id,
                 'ExplicitRating': explicit_feedback_count
             }
             result = db.reviews.insert_one(Feedback)
@@ -247,21 +255,21 @@ def saveExplicitRating(request):
             # Now checking if he has given explicit rating to the same job before
             flag = False
             for doc in feed_back_of_user:
-                if doc['JobTitle'] == job_retrieved_to_be_displayed.jobTitle:
+                if doc['Jobid'] == job_retrieved_to_be_displayed.id:
                     flag = True
                     # This means that the User has already opened this job and gave implplicit rating
                     # So increasing the previous count Would do the job
                     # Incrementing the Job Implicit Rating
                     db.reviews.update(
-                        {"JobTitle": job_retrieved_to_be_displayed.jobTitle, "Username": request.user.username},
+                        {"Jobid": job_retrieved_to_be_displayed.id, "Userid": UserRecord[0].idformongo},
                         {"$set": {"ExplicitRating": Number[1]}}
                     )
 
             if flag == False:
                 # This means the User didnt gave any rating to the same job before
                 Feedback = {
-                    'Username': username,
-                    'JobTitle': job_retrieved_to_be_displayed.jobTitle,
+                    'Userid': UserRecord[0].idformongo,
+                    'Jobid': job_retrieved_to_be_displayed.id,
                     'ExplicitRating': Number[1]
                 }
                 result = db.reviews.insert_one(Feedback)
