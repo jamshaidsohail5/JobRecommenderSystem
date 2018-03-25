@@ -681,7 +681,7 @@
 
 <form style="margin-left: 43%" action="{% url 'jobs:recommendjobs'%}" method="post">
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">RecommendJobs</button>
+    <button type="submit" class="btn btn-danger">Recommend Jobs</button>
 </form>
 
 <form class="form-inline" style="margin-left: 37%" action="{% url 'jobs:jobsretrieve' %}" method="post">
@@ -739,21 +739,31 @@
 
 
                 <div class="stars" style="float: right; margin: 0px; padding: 0px">
+                    <!--I have to include this form tag, otherwise the form below this form would not work -->
                     <form action="">
-                        <input class="star star-5" id="star-5{{ job.id }}" type="radio" name="star"/>
-                        <label class="star star-5" for="star-5{{ job.id }}"></label>
+                    </form>
+                    <form id="jobRating+{{ job.id }}" method="post" action="{% url 'jobs:saveExplicitRating' %}">
+                    {% csrf_token %}
 
-                        <input class="star star-4" id="star-4{{ job.id }}" type="radio" name="star"/>
-                        <label class="star star-4" for="star-4{{ job.id }}"></label>
+                        <input class="star star-5" id="star-5" type="radio" name="star" value="star+5+{{ job.id }}"
+                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
+                        <label class="star star-5" for="star-5"></label>
 
-                        <input class="star star-3" id="star-3{{ job.id }}" type="radio" name="star"/>
-                        <label class="star star-3" for="star-3{{ job.id }}"></label>
+                        <input class="star star-4" id="star-4" type="radio" name="star" value="star+4+{{ job.id }}"
+                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
+                        <label class="star star-4" for="star-4"></label>
 
-                        <input class="star star-2" id="star-2{{ job.id }}" type="radio" name="star"/>
-                        <label class="star star-2" for="star-2{{ job.id }}"></label>
+                        <input class="star star-3" id="star-3" type="radio" name="star" value="star+3+{{ job.id }}"
+                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
+                        <label class="star star-3" for="star-3"></label>
 
-                        <input class="star star-1" id="star-1{{ job.id }}" type="radio" name="star"/>
-                        <label class="star star-1" for="star-1{{ job.id }}"></label>
+                        <input class="star star-2" id="star-2" type="radio" name="star" value="star+2+{{ job.id }}"
+                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
+                        <label class="star star-2" for="star-2"></label>
+
+                        <input class="star star-1" id="star-1" type="radio" name="star" value="star+1+{{ job.id }}"
+                               onclick="document.getElementById('jobRating+{{ job.id }}').submit()"/>
+                        <label class="star star-1" for="star-1"></label>
                     </form>
                 </div>
 
@@ -783,9 +793,10 @@
 
                 <br>
 
-
-                <!--
-                 <a href="{{ job.jobLink }}"><span class="greenLink" style=" color: #099e2d;" >{{ job.jobLink }}</span></a>
+                {% if job.jobLink %}
+                    <a href="{{ job.jobLink }}"><span class="greenLink" style=" color: #099e2d;" >Apply Link</span></a>
+                {% endif %}
+            <!--
                 <span style="color: #666; line-height: 16px"> - {{ job.dayMonth }} - </span>
                 <span class="favLink"> Add to Favorites </span>
                 -->

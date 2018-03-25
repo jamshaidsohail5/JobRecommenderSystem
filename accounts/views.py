@@ -206,7 +206,7 @@ def loginview(request):
         if user is not None:
             login(request, user)
             username = None
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 return render(request, 'jobs.html')
 
         else:
@@ -229,7 +229,7 @@ def mainpageview(request):
     flag = False
     flag1 = False
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         username = request.user.username
 
         UserRecord = models.signupModel.objects.filter(email=username)
