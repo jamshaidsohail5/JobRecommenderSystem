@@ -199,7 +199,6 @@ def jobsretrieving(request):
                                      jobSummary_temp, jobLink_temp))
                     j += 1
         return render(request, 'jobs.html', {"jobList": jobs})
-
     else:
         return render(request, 'jobs.html')
 
@@ -279,3 +278,6 @@ def saveExplicitRating(request):
                 {"$set": {"ExplicitRating": Number[1]}}
             )
     return render(request, 'jobs.html', {"jobList": jobs})
+
+def recommendjobs(request):
+    print("Recommend Jobs")
