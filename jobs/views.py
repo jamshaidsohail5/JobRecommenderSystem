@@ -3,9 +3,9 @@ from bs4 import BeautifulSoup
 from django.shortcuts import render
 from pymongo import MongoClient
 from accounts import models
+from . import recommendationAlgos
 
 jobs = []
-
 
 class Jobs(object):
     # Note that we're taking an argument besides self, here.
@@ -21,7 +21,6 @@ class Jobs(object):
 
 def jobsviewing(request):
     return render(request, 'jobs.html')
-
 
 # This Function Stores Implicit Feedback
 def displayingJobDetail(request):
@@ -57,6 +56,7 @@ def displayingJobDetail(request):
                 'JobLocation': job_retrieved_to_be_displayed.jobLocation,
                 'JobSalary': job_retrieved_to_be_displayed.jobSalary,
                 'JobSummary': job_retrieved_to_be_displayed.jobSummary,
+                'JobApplyLink': job_retrieved_to_be_displayed.jobLink,
             }
             result = jobDetailsCollection.insert_one(Job)
 
@@ -76,6 +76,7 @@ def displayingJobDetail(request):
                     'JobLocation': job_retrieved_to_be_displayed.jobLocation,
                     'JobSalary': job_retrieved_to_be_displayed.jobSalary,
                     'JobSummary': job_retrieved_to_be_displayed.jobSummary,
+                    'JobApplyLink': job_retrieved_to_be_displayed.jobLink,
                 }
                 result = jobDetailsCollection.insert_one(Job)
             else:
@@ -235,6 +236,7 @@ def saveExplicitRating(request):
                 'JobLocation': job_retrieved_to_be_displayed.jobLocation,
                 'JobSalary': job_retrieved_to_be_displayed.jobSalary,
                 'JobSummary': job_retrieved_to_be_displayed.jobSummary,
+                'JobApplyLink': job_retrieved_to_be_displayed.jobLink,
             }
             result = jobDetailsCollection.insert_one(Job)
 
@@ -254,6 +256,7 @@ def saveExplicitRating(request):
                     'JobLocation': job_retrieved_to_be_displayed.jobLocation,
                     'JobSalary': job_retrieved_to_be_displayed.jobSalary,
                     'JobSummary': job_retrieved_to_be_displayed.jobSummary,
+                    'JobApplyLink': job_retrieved_to_be_displayed.jobLink,
                 }
                 result = jobDetailsCollection.insert_one(Job)
             else:
@@ -280,4 +283,80 @@ def saveExplicitRating(request):
     return render(request, 'jobs.html', {"jobList": jobs})
 
 def recommendjobs(request):
-    print("Recommend Jobs")
+    username = request.user.username
+    UserRecord = models.signupModel.objects.filter(email=username)
+    ID = UserRecord[0].idformongo
+    recommendedJobIDsUsingContent = recommendationAlgos.contentBasedRecommendations(ID)
+    recommendedJobIDsUsingALS = recommendationAlgos.ALSrecommendations(ID)
+    print(recommendedJobIDsUsingContent)
+    print(recommendedJobIDsUsingALS)
+    connection = MongoClient(port=27017)
+
+    db = connection.JobDatabase
+    jobs = db.Jobs
+    recommendedJobs = []
+    i=0
+    for jobId in recommendedJobIDsUsingContent:
+        if i==3:
+            break;
+        job = jobs.find_one({"ID": jobId})
+        salary = ""
+        jobLocation = ""
+        if hasattr(job, 'salary'):
+            salary = job.salary
+        if hasattr(job, 'jobLocation'):
+            jobLocation = job.jobLocation
+        recommendedJobs.append(Jobs(job['ID'], job['Title'], job['Company'], jobLocation, salary,
+                                    job['Summary'], job['ApplyLink']))
+        i=i+1;
+
+    db = connection.Jobs
+    jobs = db.jobsDetail
+    for jobId in recommendedJobIDsUsingALS:
+        if i==6:
+            break;
+        job = jobs.find_one({"userassignedId": jobId})
+        salary = ""
+        jobLocation = ""
+        applyLink = ""
+        if hasattr(job, 'JobSalary'):
+            salary = job.salary
+        if hasattr(job, 'JobLocation'):
+            jobLocation = job.jobLocation
+        recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], jobLocation, salary,
+                                    job['JobSummary'],))
+        #applyLink))
+        i=i+1;
+
+    print(recommendedJobs)
+
+    return render(request, 'jobs.html', {"jobList": recommendedJobs})
+
+def findTopRatedJobs(request):
+    topRatedJobs = recommendationAlgos.topRatedJobs()
+    recommendedJobs = []
+
+    connection = MongoClient(port=27017)
+    db = connection.Jobs
+    jobs = db.jobsDetail
+    i = 1
+    for jobId in topRatedJobs:
+        if i == 6:
+            break;
+        job = jobs.find_one({"userassignedId": jobId})
+        salary = ""
+        jobLocation = ""
+        if hasattr(job, 'JobSalary'):
+            salary = job.salary
+        if hasattr(job, 'JobLocation'):
+            jobLocation = job.jobLocation
+        recommendedJobs.append(Jobs(job['userassignedId'], job['JobTitle'], job['JobCompany'], jobLocation, salary,
+                                    job['JobSummary']))
+        # , job['JobApplyLink'])
+        i = i + 1;
+
+    print(recommendedJobs)
+
+    return render(request, 'jobs.html', {"jobList": recommendedJobs})
+
+    print("Top rated jobs Jobs")
