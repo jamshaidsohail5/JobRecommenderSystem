@@ -61,8 +61,8 @@ def contentBasedRecommendations(userId):
     hashingTF = HashingTF(inputCol="filtered", outputCol="rawFeatures", numFeatures=20)
     featurizedJobDataFrame = hashingTF.transform(processedJobDataFrame)
     featurizedResumeDataFrame = hashingTF.transform(processedResumeDataFrame)
-    featurizedJobDataFrame.show(truncate=False)
-    featurizedResumeDataFrame.show(truncate=False)
+    #featurizedJobDataFrame.show(truncate=False)
+    #featurizedResumeDataFrame.show(truncate=False)
 
     idf = IDF(inputCol="rawFeatures", outputCol="features")
     idfJobModel = idf.fit(featurizedJobDataFrame)
@@ -74,6 +74,9 @@ def contentBasedRecommendations(userId):
     normalizer = Normalizer(inputCol="features", outputCol="norm")
     dataJ = normalizer.transform(rescaledJobData)
     dataR = normalizer.transform(rescaledResumeData)
+    dataJ.show(truncate=False)
+    dataR.show(truncate=False)
+
 
     dot_udf = psf.udf(lambda x, y: float(x.dot(y)))
     SimilarityDataFrame=dataR.alias("Resume").crossJoin(dataJ.alias("Job")) \
@@ -83,7 +86,7 @@ def contentBasedRecommendations(userId):
         dot_udf("Resume.norm", "Job.norm").alias("Cosine Similarity")) \
         .sort("ResumeID", "JobID")
 
-    ResumeOneRecommendations=SimilarityDataFrame.where(SimilarityDataFrame.ResumeID=='51')
+    ResumeOneRecommendations=SimilarityDataFrame.where(SimilarityDataFrame.ResumeID==userId)
     OrderedResumeOneRecommendations=ResumeOneRecommendations.sort("Cosine Similarity", ascending=False).collect()
     recommendedJobs = []
     i=0
@@ -100,58 +103,62 @@ def contentBasedRecommendations(userId):
 def ALSrecommendations(userId):
     explicitRatings = sqlContext.read.format("com.mongodb.spark.sql.DefaultSource").option("uri",
                                                                                            "mongodb://localhost:27017/ExplicitFeedback.reviews").load()
-
-    ratings = explicitRatings.rdd.map(lambda x: Rating(int(x[2]), \
-                                                       int(x[1]), float(x[0])))
-    # Setting up the parameters for ALS
-    rank = 5  # Latent Factors to be made
-    numIterations = 10  # Times to repeat process
-    # Create the model on the training data
-    model = ALS.train(ratings, rank, numIterations)
-
-    print("\nTop 10 recommendations:")
-    recommendations = model.recommendProducts(int(userId), 10)
-    recommendedJobs = []
-    for recommendation in recommendations:
-        recommendedJobs.append(str(recommendation[1]) + "+" + str(recommendation[2]))
-        print(str(recommendation[1]) + \
-              " score " + str(recommendation[2]))
-
-    # convert the recommendations into dataframe
-    recommendedJobsRdd = sc.parallelize(recommendedJobs).map(lambda x: x.split('+')).map(lambda x: Row(x[0], x[1]))
-    recommendedJobsDF = recommendedJobsRdd.toDF()
-    recommendedJobsDF = recommendedJobsDF.selectExpr("_1 as Jobid", "_2 as score")
-
-    # Subtract the jobs user has already rated
-    ratedJobs = explicitRatings[explicitRatings['Userid'] == userId].select(['Jobid']).distinct()
-    recommendedJobs = recommendedJobsDF.select(['Jobid']).distinct().subtract(ratedJobs)
-
-    recommendedJobs = recommendedJobsDF.join(recommendedJobs, "Jobid", "right_outer").orderBy('score', ascending=False)
     finalRecommendations = []
-    i = 1
-    for x in recommendedJobs.collect():
-        finalRecommendations.append(int(x.Jobid))
-        if i == 5:
-            break;
-        i = i + 1
-    print(finalRecommendations)
+    print(explicitRatings.count())
+    if explicitRatings.count():
+        userRatedJobs = explicitRatings[explicitRatings['Userid'] == int(userId)]
+        if userRatedJobs.count():
+            ratings = explicitRatings.rdd.map(lambda x: Rating(int(x[2]), \
+                                                               int(x[1]), float(x[0])))
+            # Setting up the parameters for ALS
+            rank = 5  # Latent Factors to be made
+            numIterations = 10  # Times to repeat process
+            # Create the model on the training data
+            model = ALS.train(ratings, rank, numIterations)
+
+            print("\nTop 10 recommendations:")
+            recommendations = model.recommendProducts(int(userId), 10)
+            recommendedJobs = []
+            for recommendation in recommendations:
+                recommendedJobs.append(str(recommendation[1]) + "+" + str(recommendation[2]))
+                print(str(recommendation[1]) + \
+                      " score " + str(recommendation[2]))
+
+            # convert the recommendations into dataframe
+            recommendedJobsRdd = sc.parallelize(recommendedJobs).map(lambda x: x.split('+')).map(lambda x: Row(x[0], x[1]))
+            recommendedJobsDF = recommendedJobsRdd.toDF()
+            recommendedJobsDF = recommendedJobsDF.selectExpr("_1 as Jobid", "_2 as score")
+
+            # Subtract the jobs user has already rated
+            ratedJobs = explicitRatings[explicitRatings['Userid'] == userId].select(['Jobid']).distinct()
+            recommendedJobs = recommendedJobsDF.select(['Jobid']).distinct().subtract(ratedJobs)
+
+            recommendedJobs = recommendedJobsDF.join(recommendedJobs, "Jobid", "right_outer").orderBy('score', ascending=False)
+            i = 1
+            for x in recommendedJobs.collect():
+                finalRecommendations.append(int(x.Jobid))
+                if i == 5:
+                    break;
+                i = i + 1
+            print(finalRecommendations)
     return finalRecommendations
 
 def topRatedJobs():
     implicitRatings = sqlContext.read.format("com.mongodb.spark.sql.DefaultSource").option("uri",
-                                                                                           "mongodb://localhost:27017/ImplicitFeedback.reviews").load()
-    implicitRatings = implicitRatings.select('Jobid', 'ImplicitRating')
-    implicitRatings = implicitRatings.withColumn("Jobid", implicitRatings["Jobid"].cast(IntegerType()))
-    print(implicitRatings.show())
-    implicitRatings = implicitRatings.rdd.reduceByKey(lambda a, b: a + b).toDF().selectExpr("_1 as Jobid",
-                                                                                            "_2 as ImplicitRating")
-    implicitRatings = implicitRatings.orderBy('ImplicitRating', ascending=False)
+                                                                                        "mongodb://localhost:27017/ImplicitFeedback.reviews").load()
     recommendedJobs = []
-    i = 1
-    for x in implicitRatings.collect():
-        recommendedJobs.append(int(x.Jobid))
-        if i == 5:
-            break;
-        i = i + 1
-    print(recommendedJobs)
+    if implicitRatings.count():
+        implicitRatings = implicitRatings.select('Jobid', 'ImplicitRating')
+        implicitRatings = implicitRatings.withColumn("Jobid", implicitRatings["Jobid"].cast(IntegerType()))
+        print(implicitRatings.show())
+        implicitRatings = implicitRatings.rdd.reduceByKey(lambda a, b: a + b).toDF().selectExpr("_1 as Jobid",
+                                                                                                "_2 as ImplicitRating")
+        implicitRatings = implicitRatings.orderBy('ImplicitRating', ascending=False)
+        i = 1
+        for x in implicitRatings.collect():
+            recommendedJobs.append(int(x.Jobid))
+            if i == 5:
+                break;
+            i = i + 1
+        print(recommendedJobs)
     return recommendedJobs

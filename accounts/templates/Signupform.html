@@ -56,36 +56,7 @@
         textarea {
             font-size: 18px;
         }
-
-{#        .container5 {#}
-{#            padding-right: 15px;#}
-{#            padding-left: 15px;#}
-{#            margin-right: auto;#}
-{#            margin-left: auto;#}
-{#        }#}
-{##}
-{#        @media (min-width: 768px) {#}
-{#            .container5 {#}
-{#                width: 750px;#}
-{#            }#}
-{#        }#}
-{##}
-{#        @media (min-width: 992px) {#}
-{#            .container5 {#}
-{#                width: 970px;#}
-{#            }#}
-{#        }#}
-{##}
-{#        @media (min-width: 1200px) {#}
-{#            .container5 {#}
-{#                width: 1170px;#}
-{#            }#}
-{#        }#}
-
-
     </style>
-
-
 </head>
 
 <body style="font-size: large">
@@ -141,12 +112,6 @@
     <br/>
 
 {% endif %}
-
-
-
-
-
-
 
 <form class="form-horizontal" style="margin-top: 40px;margin-right: 25%" method="post"
       action="{% url 'accounts:signup' %} ">
@@ -313,7 +278,6 @@
                     <hr/>
 
 
-
                     <div class="container5">
                         <div class="row5">
                             <div class="col-lg-3">
@@ -348,16 +312,15 @@
                             </div>
 
 
-                            <div class="col-lg-3">
+                            <div class="col-lg-12" >
                                 <div class="col-xs-10">
-                                    <textarea name="Descriptions[]" style="width:250px;height:150px;font-size: 12px" id="desc" required></textarea>
+                                    <textarea name="Descriptions[]" style="width:250px;height:150px;font-size: 12px"
+                                              id="desc" required></textarea>
                                 </div>
                             </div>
 
                         </div>
                     </div>
-
-
 
 
                 </div>
@@ -440,7 +403,6 @@
 
 
     // this is for Work Experience
-
     var $container = $('.container5');
     var $row = $('.row5');
     var $add = $('#addButton');
@@ -453,14 +415,12 @@
 
     $add.on('click', function () {
 
-        $(".my").after($container.clone())
 
+        var $newRow = $('.row5').clone().insertAfter('.container5 .row5:last');
 
-{#        var $newRow = $container.clone().insertAfter('.container5:last');#}
-{##}
-{#        $newRow.find('input').each(function () {#}
-{#            this.value = '';#}
-{#        });#}
+        $newRow.find('input').each(function () {
+            this.value = '';
+        });
 
     });
 

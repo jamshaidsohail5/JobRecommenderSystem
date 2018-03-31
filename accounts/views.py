@@ -222,7 +222,6 @@ def logoutview(request):
 
 
 def mainpageview(request):
-    print("aya 1")
     print(request.user)
     print(request.user.username)
 
@@ -233,15 +232,12 @@ def mainpageview(request):
         username = request.user.username
 
         UserRecord = models.signupModel.objects.filter(email=username)
-
-        UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
-
-        UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
+        UserEducations = models.Education.objects.filter(UserEducation=UserRecord[0])
+        UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord[0])
 
         skills = UserRecord[0].skills.replace('"', '').replace('[', '').replace(']', '').split(",")
         interests1 = UserRecord[0].interests.replace("'", "").replace(" ", "").replace("[", "").replace("]", "").split(
             ",")
-
         if UserRecord[0].gender == 'male':
             flag = True
         else:
@@ -260,34 +256,23 @@ def mainpageview(request):
 def editprofile(request):
     # Now here i ll retrieve all the credentials of the user from the
     # database and will display them on the page
-    print("aya 7")
-    print(request.user)
-    print(request.user.username)
-
     flag = False
     flag1 = False
-    if request.user.is_authenticated():
-        print("aya 8")
-
+    if request.user.is_authenticated:
         username = request.user.username
-        print("aya 9")
 
         UserRecord = models.signupModel.objects.filter(email=username)
-        print("aya 10")
-
-        UserEducations = models.Education.objects.filter(UserEducation=UserRecord)
-        UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord)
+        UserEducations = models.Education.objects.filter(UserEducation=UserRecord[0])
+        UserExperiences = models.workexperienceModel.objects.filter(UserExperience=UserRecord[0])
 
         skills = UserRecord[0].skills.replace('"', '').replace('[', '').replace(']', '').split(",")
         interests1 = UserRecord[0].interests.replace("'", "").replace(" ", "").replace("[", "").replace("]", "").split(
             ",")
-        print("aya 11")
 
         if UserRecord[0].gender == 'male':
             flag = True
         else:
             flag1 = True
-        print("aya 12")
 
         return render(request, 'EditProfile.html', {'UserRecord': UserRecord,
                                                     'UserEducation': UserEducations,
