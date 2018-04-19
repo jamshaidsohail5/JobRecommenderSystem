@@ -100,6 +100,8 @@ def displayingJobDetail(request):
                     print("The job is the searched job")
                     jobToBeStored = jobs[jobId - 1]
                     jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored.jobTitle})
+
+                    #This covers the scenario when a user has clicked a searched job and then he again searches and the same job appers, the jobId will be local so we are searching on job title
                     if jobsData is not None:
                         jobId = jobsData['userassignedId']
                     else:
@@ -131,6 +133,8 @@ def displayingJobDetail(request):
                                          salary,
                                          jobsData['Summary'], applyLink)
                     jobsData = jobDetailsCollection.find_one({"JobTitle": jobToBeStored.jobTitle})
+
+                    # This covers the scenario when a user has clicked a recommended job(from CBR) and then he again clicks, its id will be the one from storedJobs so we'll search based on jobTitle
                     if jobsData is not None:
                         jobId = jobsData['userassignedId']
                     else:
@@ -296,6 +300,7 @@ def saveExplicitRating(request):
 
         jobsData = jobDetailsCollection.find_one({"userassignedId": jobId})
         print(jobsData)
+
         # If does not exists, retrieve the number of jobs and assign count+1 as jobId
         if jobsData is None:
 
